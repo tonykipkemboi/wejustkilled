@@ -6,8 +6,8 @@ Only the current `main` branch (the deployed site) is supported.
 
 ## Reporting a vulnerability
 
-Please report privately via GitHub: **Security → Report a vulnerability** on this repository (private vulnerability
-reporting), or contact the maintainer [@tonykipkemboi](https://github.com/tonykipkemboi) directly. Do not open a public issue.
+Please report privately by contacting the maintainer [@tonykipkemboi](https://github.com/tonykipkemboi) directly.
+Do not open a public issue.
 Expect an acknowledgement within 3 days and a fix or mitigation plan within 14 days.
 
 ## What this project does to stay safe
