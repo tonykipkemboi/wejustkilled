@@ -264,10 +264,11 @@
     const get = () => (root.dataset.theme === 'light' ? 'light' : 'dark');
     const apply = (t) => {
       root.dataset.theme = t;
-      $$('meta[name="theme-color"]').forEach((m) => m.setAttribute('content', t === 'light' ? '#e6d7b2' : '#11100e'));
+      $$('meta[name="theme-color"]').forEach((m) => m.setAttribute('content', t === 'light' ? '#ffffff' : '#11100e'));
       btn.setAttribute('aria-pressed', String(t === 'light'));
       btn.title = t === 'light' ? 'Lights are on. Pull for night shift.' : 'Lights are off. Pull for day shift.';
       Cord.redraw();
+      document.dispatchEvent(new Event('wjk:theme'));
     };
     mq.addEventListener?.('change', (e) => !stored && apply(e.matches ? 'light' : 'dark'));
     const set = (t) => {
@@ -404,7 +405,7 @@
     const ink = () => {
       const light = document.documentElement.dataset.theme === 'light';
       return light
-        ? { bead: '#6b5530', hi: '#a98b55', bob: '#5a2a1e', bob2: '#8e4632', glow: 'rgba(0,0,0,0)' }
+        ? { bead: '#5c6570', hi: '#aeb6bf', bob: '#a8231b', bob2: '#d0483d', glow: 'rgba(0,0,0,0)' }
         : { bead: '#a48c5d', hi: '#e4cf9c', bob: '#c9b48a', bob2: '#f3e6c4', glow: 'rgba(0,0,0,.45)' };
     };
     const draw = () => {
@@ -1216,16 +1217,38 @@
     return imgCache.get(src);
   };
   const MONO_INK = ['#7a2a22', '#28405f', '#2f5a3b', '#6a4b1d', '#4b3a5c', '#5b3030'];
-  const P = {
-    paper: '#f3ecdb',
-    paper2: '#e6dabe',
-    ink: '#1f1a14',
-    mute: '#6b5d47',
-    rule: '#9d8c6d',
-    red: '#b0251c',
-    green: '#2c6b3c',
-    blue: '#1f2f63',
+  // certificate palettes: warm card stock at night, plain white form paper by day
+  const PAL = {
+    dark: {
+      paper: '#f3ecdb',
+      paper2: '#e6dabe',
+      ink: '#1f1a14',
+      mute: '#6b5d47',
+      rule: '#9d8c6d',
+      red: '#b0251c',
+      green: '#2c6b3c',
+      blue: '#1f2f63',
+      logo: '#fbf7ee',
+      mono: '#f6efe0',
+      grain: 1,
+    },
+    light: {
+      paper: '#ffffff',
+      paper2: '#ffffff',
+      ink: '#101317',
+      mute: '#4d5560',
+      rule: '#9aa3ad',
+      red: '#b0251c',
+      green: '#2a6534',
+      blue: '#1f2f63',
+      logo: '#ffffff',
+      mono: '#ffffff',
+      grain: 0,
+    },
   };
+  const P = { ...PAL.dark };
+  const pal = () => (document.documentElement.dataset.theme === 'light' ? 'light' : 'dark');
+  const usePal = (t) => Object.assign(P, PAL[t]);
   const paper = (x, W, H, seed) => {
     const R = rng(seed);
     const g = x.createLinearGradient(0, 0, W, H);
@@ -1233,7 +1256,7 @@
     g.addColorStop(1, P.paper2);
     x.fillStyle = g;
     x.fillRect(0, 0, W, H);
-    for (let i = 0; i < 2600; i++) {
+    for (let i = 0; i < (P.grain ? 2600 : 0); i++) {
       x.fillStyle = `rgba(${R() < 0.6 ? '80,60,30' : '255,255,255'},${R() * 0.05})`;
       x.fillRect(R() * W, R() * H, 1 + R() * 1.6, 1 + R() * 1.6);
     }
@@ -1280,7 +1303,8 @@
     txt(x, (n ? n + '. ' : '') + label, bx + 14, by + 26, '600 15px "IBM Plex Mono"', P.mute, 'left', 1.5);
   };
   const drawLogo = async (x, name, src, bx, by, sz) => {
-    x.fillStyle = '#fbf7ee';
+    const c = { ...P }; // palette as of the call; P can change across the await
+    x.fillStyle = c.logo;
     x.fillRect(bx, by, sz, sz);
     const img = src && typeof src === 'object' ? src : await loadImg(src || logoSrc(name));
     const pad = 18;
@@ -1301,12 +1325,12 @@
         bx + sz / 2,
         by + sz / 2 + sz * 0.17,
         `800 ${sz * 0.46}px "Barlow Condensed"`,
-        '#f6efe0',
+        c.mono,
         'center',
         1,
       );
     }
-    x.strokeStyle = P.ink;
+    x.strokeStyle = c.ink;
     x.lineWidth = 2;
     x.strokeRect(bx, by, sz, sz);
   };
@@ -1349,8 +1373,9 @@
     txt(x, right, W - 84, H - 76, '600 17px "IBM Plex Mono"', P.ink, 'right', 2);
   };
   const asOf = () => fdate(D.meta?.generated_at ? D.meta.generated_at + 'T17:00:00Z' : Date.now());
-  const drawCert = async (v) => {
+  const drawCert = async (v, t = pal()) => {
     await fontsReady();
+    usePal(t);
     const W = 1500,
       H = 1000,
       c = document.createElement('canvas');
@@ -1372,6 +1397,7 @@
     );
     // ID block: logo + name
     await drawLogo(x, v.name, null, 84, 272, 196);
+    usePal(t); // another theme's draw may have run during the await
     box(x, 300, 272, W - 384, 196, 'NAME OF DECEASED', 1);
     const nm = v.name.toUpperCase();
     // leave room on the right of the name box for the status stamp
@@ -1402,6 +1428,7 @@
         ax = L + 16 + i * 66,
         ay = ky + 40;
       const im = await loadImg(has(LOGO.killers, a.key) ? LOGO.killers[a.key] : null);
+      usePal(t);
       x.save();
       x.beginPath();
       x.rect(ax, ay, 56, 56);
@@ -1410,7 +1437,7 @@
       else {
         x.fillStyle = MONO_INK[hash32(a.key) % 6];
         x.fillRect(ax, ay, 56, 56);
-        txt(x, initials(a.name), ax + 28, ay + 38, '800 28px "Barlow Condensed"', '#f6efe0', 'center');
+        txt(x, initials(a.name), ax + 28, ay + 38, '800 28px "Barlow Condensed"', P.mono, 'center');
       }
       x.restore();
       x.strokeStyle = P.ink;
@@ -1438,8 +1465,9 @@
     stampAt(x, R, v.brand ? 'STILL ALIVE' : 'PROBABLY FINE', v.brand ? P.green : P.red, W - 300, 362, -0.1, 66);
     return c;
   };
-  const drawSafe = async (name, img = null) => {
+  const drawSafe = async (name, img = null, t = pal()) => {
     await fontsReady();
+    usePal(t);
     const W = 1500,
       H = 1000,
       c = document.createElement('canvas');
@@ -1459,6 +1487,7 @@
       P.mute,
     );
     await drawLogo(x, name, img, 84, 272, 196);
+    usePal(t);
     box(x, 300, 272, W - 384, 196, 'NAME OF PRODUCT', 1);
     const nm = name.toUpperCase();
     const fs = fitFont(x, nm, W - 430, 132, 54, '800 #px "Barlow Condensed"');
@@ -1494,13 +1523,15 @@
   // keyed by victim slug, which can be any string ("constructor" included): no prototype
   const certBlobs = Object.create(null),
     certCache = Object.create(null);
-  const certBlob = (v) => (certBlobs[v.slug] ||= drawCert(v).then(toBlob));
-  const certURL = async (v) => (certCache[v.slug] ||= URL.createObjectURL(await certBlob(v)));
+  // cached per theme: a light-mode PNG is white paper, a dark-mode one is card stock
+  const certBlob = (v, t = pal()) => (certBlobs[t + ':' + v.slug] ||= drawCert(v, t).then(toBlob));
+  const certURL = async (v, t = pal()) => (certCache[t + ':' + v.slug] ||= URL.createObjectURL(await certBlob(v, t)));
   let safeLogo = null,
     safeCur = null;
   const safeBlob = (name) => {
-    if (!safeCur || safeCur.name !== name || safeCur.logo !== safeLogo)
-      safeCur = { name, logo: safeLogo, blob: drawSafe(name, safeLogo).then(toBlob) };
+    const t = pal();
+    if (!safeCur || safeCur.name !== name || safeCur.logo !== safeLogo || safeCur.t !== t)
+      safeCur = { name, logo: safeLogo, t, blob: drawSafe(name, safeLogo, t).then(toBlob) };
     return safeCur.blob;
   };
   const saveBlob = (blob, file) => {
@@ -1518,8 +1549,9 @@
     Sound.play('shutter');
     toast('Certificate issued. Frame it.');
   };
-  const fillSlot = async (slot, blob, alt) => {
+  const fillSlot = async (slot, blob, alt, paint, key) => {
     if (!slot || !blob) return;
+    if (paint) Object.assign(slot.dataset, { paint, key, alt });
     const img = document.createElement('img');
     const u = URL.createObjectURL(blob);
     img.src = u;
@@ -1529,6 +1561,20 @@
     img.onload = () => slot.dataset.keep || setTimeout(() => URL.revokeObjectURL(u), 1000);
     slot.replaceChildren(img);
   };
+
+  // a theme switch repaints any certificate or safe card on screen in the new paper
+  document.addEventListener('wjk:theme', () => {
+    $$('[data-paint]').forEach(async (el) => {
+      const k = el.dataset.paint,
+        key = el.dataset.key || '';
+      if (k === 'safe') return fillSlot(el, await safeBlob(key), el.dataset.alt, 'safe', key);
+      if (!has(V, key)) return;
+      if (k === 'thumb') {
+        const img = $('img', el);
+        if (img) img.src = await certURL(V[key]);
+      } else fillSlot(el, await certBlob(V[key]), el.dataset.alt, k, key);
+    });
+  });
 
   /* ---------------- modal ---------------- */
   let modalOpen = false,
@@ -1599,6 +1645,8 @@
         slot,
         blob,
         `Death certificate for ${v.name}: killed ${times(v.kills.length)}, status ${v.brand ? 'still alive' : 'probably fine'}.`,
+        'cert',
+        v.slug,
       );
       Sound.play('stamp');
     }
@@ -1612,8 +1660,15 @@
     Sound.play('stamp');
     const slot = $('#modal-body .r-slot');
     const { primary: v } = lookup(name);
-    if (v) fillSlot(slot, await certBlob(v), `Death certificate for ${v.name}`);
-    else if (slot) fillSlot(slot, await safeBlob(name || 'Your product'), `Marked safe card for ${name}`);
+    if (v) fillSlot(slot, await certBlob(v), `Death certificate for ${v.name}`, 'cert', v.slug);
+    else if (slot)
+      fillSlot(
+        slot,
+        await safeBlob(name || 'Your product'),
+        `Marked safe card for ${name}`,
+        'safe',
+        name || 'Your product',
+      );
     return true;
   };
 
@@ -1821,6 +1876,7 @@
       const u = await certURL(v);
       const t = $('.cert-thumb', el);
       if (t) {
+        Object.assign(t.dataset, { paint: 'thumb', key: v.slug });
         const img = document.createElement('img');
         img.src = u;
         img.alt = `Death certificate for ${v.name}`;
@@ -2364,7 +2420,7 @@
       im.src = u;
       im.onload = () => URL.revokeObjectURL(u);
       $('#r-logo')?.replaceChildren(im);
-      fillSlot($('#modal-body .r-slot'), await safeBlob(name), `Marked safe card for ${name}`);
+      fillSlot($('#modal-body .r-slot'), await safeBlob(name), `Marked safe card for ${name}`, 'safe', name);
       Sound.play('paper');
     });
     $('#sort').onchange = () => {
