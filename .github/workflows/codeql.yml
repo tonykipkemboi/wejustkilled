@@ -1,0 +1,58 @@
+name: CodeQL
+
+# Code scanning uploads need GitHub Code Security on private repos. Without it the upload
+# step is allowed to fail; the SARIF is kept as an artifact and error-level findings still fail the job.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: "0 11 * * *" # 6:00 AM EST / 7:00 AM EDT
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  analyze:
+    name: CodeQL (javascript)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      actions: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: github/codeql-action/init@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
+        with:
+          languages: javascript-typescript
+          build-mode: none
+          queries: security-extended
+          config: |
+            paths-ignore:
+              - site/data.js
+              - node_modules
+      - uses: github/codeql-action/analyze@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
+        with:
+          upload: never
+          output: sarif-results
+      - name: Upload SARIF to code scanning (needs Code Security on private repos)
+        continue-on-error: true
+        uses: github/codeql-action/upload-sarif@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
+        with:
+          sarif_file: sarif-results
+      - name: Keep SARIF as an artifact
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: codeql-sarif
+          path: sarif-results/
+          retention-days: 30
+      - name: Fail on error-level findings
+        run: |
+          n=$(jq '[.runs[].results[]? | select((.level // "warning") == "error")] | length' sarif-results/*.sarif)
+          jq -r '.runs[].results[]? | "\(.level // "warning")\t\(.ruleId)\t\(.locations[0].physicalLocation.artifactLocation.uri):\(.locations[0].physicalLocation.region.startLine)"' sarif-results/*.sarif || true
+          echo "error-level findings: $n"
+          test "$n" -eq 0

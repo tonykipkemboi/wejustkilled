@@ -1,0 +1,35 @@
+# Daily dependency and CVE update checks. Security updates are opened as soon as an advisory lands,
+# independent of this schedule, once "Dependabot security updates" is enabled in repo settings.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: daily
+      time: "06:00"
+      timezone: America/New_York
+    open-pull-requests-limit: 10
+    groups:
+      dev-tooling:
+        patterns: ["*"]
+        update-types: [minor, patch]
+    labels: [dependencies]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: daily
+      time: "06:00"
+      timezone: America/New_York
+    groups:
+      actions:
+        patterns: ["*"]
+    labels: [dependencies, ci]
+
+  - package-ecosystem: pip
+    directory: /
+    schedule:
+      interval: daily
+      time: "06:00"
+      timezone: America/New_York
+    labels: [dependencies]
