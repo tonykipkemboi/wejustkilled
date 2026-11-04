@@ -2,7 +2,6 @@
 
 A parody "case file" of startup launch posts on X that claim to have "just killed" another product.
 305 cases from January 2023 to November 2026, each with a victim, a killer, the evidence post and a printable death certificate.
-The original tip came from [@arieljrubin](https://x.com/arieljrubin/status/2117698113217741099).
 
 ![Home page](docs/img/home.png)
 

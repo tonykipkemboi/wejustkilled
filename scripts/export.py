@@ -17,7 +17,6 @@ for n, r in enumerate(K, 1):
 mc = collections.Counter(r["created_at"][:7] for r in K)
 vc = collections.Counter(v for r in K for v in r["victims"])
 newn = sum(1 for r in K if r.get("batch") == "backfill")
-o = M.get("origin", {})
 L = []
 V = M.get("verification", {})
 RM = json.load(open("data/removed.json")) if __import__("os").path.exists("data/removed.json") else []
@@ -67,7 +66,6 @@ L += [
     "## About this project",
     '**We Just Killed** is a fun static site, built for Tony Kipkemboi. It is a crime-scene-themed wall of launch posts on X where a founder or product account says its product "just killed" another product, tool, job or habit. The victims are all, as far as anyone can tell, still alive.',
     "",
-    f'- **Origin post:** {o.get("url", "https://x.com/arieljrubin/status/2117698113217741099")} by @arieljrubin: "everyone needs to relax"',
     "- **Data source:** the X API full-archive search (`search_posts_all`), via the X connector. Every record below is a real post and every metric was returned by the API. Nothing was invented or estimated.",
     "- **Collected:** 2026-11-04. Metrics are a snapshot from collection time (v1 posts were captured earlier the same day).",
     "- **Date range searched:** 2023-01-01 to 2026-11-04 (UTC). 2022 was not searched because 2023 had no genuine cases.",

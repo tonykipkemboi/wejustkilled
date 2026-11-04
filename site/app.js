@@ -47,18 +47,6 @@
     'November',
     'December',
   ];
-  const ORIGIN = {
-    url: 'https://x.com/arieljrubin/status/2117698113217741099',
-    handle: 'arieljrubin',
-    id: '2117698113217741099',
-  };
-  const snowDate = (id) => {
-    try {
-      return new Date(Number((BigInt(id) >> 22n) + 1288834974657n));
-    } catch {
-      return null;
-    }
-  };
   const plural = (n, w, p = w + 's') => `${n} ${n === 1 ? w : p}`;
   const times = (n) => (n === 1 ? 'once' : n === 2 ? 'twice' : `${n} times`);
   const hash32 = (s) => {
@@ -644,7 +632,7 @@
           .join(', ')}${rel.length > 5 ? '…' : ''}</p>`
       : '';
     const shareText = alive
-      ? `${v.name} has been killed ${times(n)} and is somehow still alive. Everyone needs to relax 🔪`
+      ? `${v.name} has been killed ${times(n)} and is somehow still alive 🔪`
       : `“${v.name}” has been killed ${times(n)}. Status: unconfirmed, probably fine 🔪`;
     return `<div class="verdict"><p class="eyebrow">Coroner’s verdict · Victim #${v.rank} of ${victims.length}</p><h2 class="vname" id="modal-title">${esc(v.name)}</h2><div class="vstamp">${stamp}</div>
     <p class="vstat">Status: ${alive ? '<b>still alive.</b>' : '<b class="q">unconfirmed. Probably fine.</b>'}</p>
@@ -897,7 +885,7 @@
     x.save();
     x.translate(W - 300, 838);
     x.rotate(-0.04);
-    x.fillText('everyone needs to relax', 0, 0);
+    x.fillText('the coroner', 0, 0);
     x.restore();
     x.strokeStyle = INK;
     x.lineWidth = 1.2;
@@ -907,7 +895,7 @@
     x.stroke();
     x.font = '400 14px "Special Elite"';
     x.fillStyle = MUTE;
-    x.fillText('ATTENDING CORONER · TIP VIA @ARIELJRUBIN · ' + asOf, W - 310, 882);
+    x.fillText('ATTENDING CORONER · ' + SITE.toUpperCase() + ' · ' + asOf, W - 310, 882);
     // status stamp
     x.save();
     x.translate(W / 2 - 20, 840);
@@ -1067,8 +1055,7 @@
     });
     const topDay = Object.entries(days).sort((a, b) => b[1] - a[1] || b[0].localeCompare(a[0]))[0];
     const viral = [...K].sort((a, b) => b.likes - a.likes)[0];
-    const od = snowDate(ORIGIN.id);
-    return { m, all, outbreak: all[streak], peak, topDay, viral, first: byNew.at(-1), last: byNew[0], od };
+    return { m, all, outbreak: all[streak], peak, topDay, viral, first: byNew.at(-1), last: byNew[0] };
   };
   const mlabel = (key) => `${MONL[+key.slice(5) - 1]} ${key.slice(0, 4)}`;
   const chartHTML = (full) => {
@@ -1082,7 +1069,6 @@
     addPin(F.first.created_at.slice(0, 7), 1);
     addPin(F.outbreak, 2);
     addPin(F.peak, 3);
-    if (F.od) addPin(F.od.toISOString().slice(0, 7), pins[F.od.toISOString().slice(0, 7)] ? 0 : 4);
     let cum = full ? 0 : K.filter((k) => k.created_at.slice(0, 7) < months[0]).length;
     const pts = months.map((k, i) => {
       cum += F.m[k] || 0;
@@ -1120,12 +1106,6 @@
       'Deadliest month',
       `${mlabel(F.peak)}: <b>${F.m[F.peak]}</b> kill claims, about ${((F.m[F.peak] / 31) * 7).toFixed(0)} a week. <a href="#/month/${F.peak}">See the carnage →</a>`,
     ]);
-    if (F.od)
-      N.push([
-        has(4) ? 4 : 0,
-        'The tip',
-        `${fdate(F.od)}: <a href="${ORIGIN.url}" target="_blank" rel="noopener noreferrer">@arieljrubin</a> posted four of these with the caption “everyone needs to relax.” This site is the case file.`,
-      ]);
     N.push([
       0,
       'Deadliest day',

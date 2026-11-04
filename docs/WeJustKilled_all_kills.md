@@ -3,7 +3,6 @@
 ## About this project
 **We Just Killed** is a fun static site, built for Tony Kipkemboi. It is a crime-scene-themed wall of launch posts on X where a founder or product account says its product "just killed" another product, tool, job or habit. The victims are all, as far as anyone can tell, still alive.
 
-- **Origin post:** https://x.com/arieljrubin/status/2117698113217741099 by @arieljrubin: "everyone needs to relax"
 - **Data source:** the X API full-archive search (`search_posts_all`), via the X connector. Every record below is a real post and every metric was returned by the API. Nothing was invented or estimated.
 - **Collected:** 2026-11-04. Metrics are a snapshot from collection time (v1 posts were captured earlier the same day).
 - **Date range searched:** 2023-01-01 to 2026-11-04 (UTC). 2022 was not searched because 2023 had no genuine cases.
