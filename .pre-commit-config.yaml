@@ -15,6 +15,8 @@ repos:
       - id: check-yaml
       - id: check-added-large-files
         args: [--maxkb=1024]
+        # The approved social-preview video (~2 MB) is the only allowed exception.
+        exclude: ^site/og-video\.mp4$
       - id: detect-private-key
       - id: check-merge-conflict
       - id: mixed-line-ending

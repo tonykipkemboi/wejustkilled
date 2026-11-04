@@ -14,6 +14,8 @@ const TYPES = {
   ".css": "text/css; charset=utf-8",
   ".json": "application/json; charset=utf-8",
   ".png": "image/png",
+  ".jpg": "image/jpeg",
+  ".mp4": "video/mp4",
   ".svg": "image/svg+xml",
   ".woff2": "font/woff2",
   ".md": "text/markdown; charset=utf-8",
@@ -36,7 +38,22 @@ export const startServer = (port = 8780) =>
       try {
         if (!(await stat(file)).isFile()) throw new Error("not a file");
         res.setHeader("Content-Type", TYPES[extname(file)] || "application/octet-stream");
-        res.end(await readFile(file));
+        res.setHeader("Accept-Ranges", "bytes");
+        const body = await readFile(file);
+        // Single byte-range support so <video> and Safari can seek, like Vercel's CDN.
+        const m = /^bytes=(\d*)-(\d*)$/.exec(req.headers.range || "");
+        if (m && (m[1] || m[2])) {
+          const start = m[1] ? Number(m[1]) : Math.max(0, body.length - Number(m[2]));
+          const end = m[1] && m[2] ? Math.min(Number(m[2]), body.length - 1) : body.length - 1;
+          if (start > end || start >= body.length) {
+            res.writeHead(416, { "Content-Range": `bytes */${body.length}` }).end();
+            return;
+          }
+          res.writeHead(206, { "Content-Range": `bytes ${start}-${end}/${body.length}` });
+          res.end(body.subarray(start, end + 1));
+          return;
+        }
+        res.end(body);
       } catch {
         res.writeHead(404, { "Content-Type": "text/plain" }).end("not found");
       }

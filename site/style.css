@@ -2835,3 +2835,27 @@ body.board-on .foot {
 .u-alive {
   color: #1d8a4c !important;
 }
+.foot-credit {
+  margin: 18px auto 0;
+  max-width: 640px;
+  font: 400 12px/1.7 var(--f-type);
+  letter-spacing: 0.04em;
+  color: var(--mute2);
+  opacity: 0.85;
+}
+.foot-credit .fc-l {
+  display: block;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--mute);
+  margin-bottom: 2px;
+}
+.foot-credit a {
+  color: var(--mute);
+  text-decoration-color: rgba(255, 255, 255, 0.25);
+  text-underline-offset: 2px;
+}
+.foot-credit a:hover {
+  color: var(--chalk);
+}

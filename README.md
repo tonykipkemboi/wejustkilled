@@ -79,11 +79,15 @@ To regenerate the handoff exports: `python3 -m pip install -r requirements.txt &
 
 ![Death certificate](docs/img/death-certificate.png)
 
+## Social preview
+
+`site/og.png` is the primary share card; `site/og-video.mp4` (1280×720, 8 s, H.264/AAC) with `og-video-poster.jpg` is the `og:video` for platforms that play it. Music and footage credits are in [docs/CREDITS.md](docs/CREDITS.md).
+
 ## Security
 
 See [SECURITY.md](SECURITY.md) and the [security review](docs/security-review.md).
 
 ## License
 
-Code: [MIT](LICENSE). Fonts are self-hosted under the SIL OFL 1.1 and Apache 2.0 (see `site/assets/fonts/LICENSES.md`).
+Code: [MIT](LICENSE). The preview video's music is "Sneaky Snitch" by Kevin MacLeod under CC BY 4.0; see [docs/CREDITS.md](docs/CREDITS.md). Fonts are self-hosted under the SIL OFL 1.1 and Apache 2.0 (see `site/assets/fonts/LICENSES.md`).
 Quoted posts, names, handles and avatars belong to their authors.

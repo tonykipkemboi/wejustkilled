@@ -25,4 +25,5 @@ SOFTWARE.
 The MIT licence covers the code in this repository. It does not cover:
 - the quoted post text, names, handles and avatars in data/, docs/ and site/kills.json
   and site/data.js, which belong to their authors and are reproduced from public posts on X;
-- the fonts in site/assets/fonts/, which are under their own licences (see LICENSES.md there).
+- the fonts in site/assets/fonts/, which are under their own licences (see LICENSES.md there);
+- the music in site/og-video.mp4, "Sneaky Snitch" by Kevin MacLeod, licensed CC BY 4.0 (see docs/CREDITS.md).
