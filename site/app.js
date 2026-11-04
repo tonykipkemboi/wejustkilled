@@ -2305,7 +2305,7 @@
     reveal($('#v-' + v));
   };
   const TITLES = {
-    home: 'We Just Killed — every startup that “just killed” another product',
+    home: 'Is your product dead?',
     cases: 'Case files — We Just Killed',
     board: 'Evidence board — We Just Killed',
     morgue: 'The morgue — We Just Killed',
