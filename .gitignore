@@ -1,0 +1,37 @@
+# dependencies
+node_modules/
+.venv/
+__pycache__/
+*.pyc
+.ruff_cache/
+
+# local working data (raw X API responses, search pool, backups); see data/README.md
+data/pool.json
+data/kills_pre_verify.json
+data/kills_v1_backup.json
+data/cand_ids.json
+raw/
+scripts/verify/*.json
+scripts/verify/*.txt
+
+# generated / bulky
+docs/*.docx
+*.zip
+*.log
+tests/shots/
+screenshots/
+playwright-report/
+test-results/
+
+# secrets and local env
+.env
+.env.*
+*.pem
+*.key
+.vercel/
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
