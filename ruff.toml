@@ -1,0 +1,14 @@
+target-version = "py311"
+line-length = 120
+extend-exclude = ["node_modules"]
+
+[lint]
+# pyflakes, pycodestyle errors, bugbear, bandit (security), pyupgrade, simplify
+select = ["F", "E4", "E7", "E9", "B", "S", "UP"]
+ignore = [
+  "E701", "E702", "E741",  # dense one-off data scripts
+  "S101",                  # asserts are fine in scripts
+]
+
+[lint.per-file-ignores]
+"scripts/verify/decisions.py" = ["E501"]

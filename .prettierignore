@@ -1,0 +1,7 @@
+node_modules/
+package-lock.json
+site/data.js
+site/kills.json
+data/
+docs/WeJustKilled_all_kills.*
+site/assets/fonts/*.txt

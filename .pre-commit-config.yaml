@@ -1,0 +1,59 @@
+# Setup: npm ci && python3 -m pip install pre-commit && pre-commit install
+# Remote hook revisions are pinned to full commit SHAs (tag in the "frozen" comment).
+# The JS/CSS/HTML hooks run the exact tool versions pinned in package-lock.json.
+default_install_hook_types: [pre-commit]
+exclude: ^(node_modules/|site/assets/fonts/.*\.txt$)
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: 3e8a8703264a2f4a69428a0aa4dcb512790b2c8c # frozen: v6.0.0
+    hooks:
+      - id: trailing-whitespace
+        exclude: ^(site/data\.js|site/kills\.json|data/|docs/WeJustKilled_all_kills\.)
+      - id: end-of-file-fixer
+        exclude: ^(site/data\.js|site/kills\.json|data/|docs/WeJustKilled_all_kills\.)
+      - id: check-json
+      - id: check-yaml
+      - id: check-added-large-files
+        args: [--maxkb=1024]
+      - id: detect-private-key
+      - id: check-merge-conflict
+      - id: mixed-line-ending
+        args: [--fix=lf]
+        exclude: ^docs/WeJustKilled_all_kills\.csv$ # RFC 4180 CSV uses CRLF
+
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: 83d9cd684c87d95d656c1458ef04895a7f1cbd8e # frozen: v8.30.1
+    hooks:
+      - id: gitleaks
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: 25bcf95026b96e2dd3c0aec3090c3d6ef6ca2e6c # frozen: v0.17.3
+    hooks:
+      - id: ruff-check
+        files: ^scripts/
+      - id: ruff-format
+        files: ^scripts/
+
+  - repo: local
+    hooks:
+      - id: eslint
+        name: eslint
+        entry: npx --no-install eslint --max-warnings 0
+        language: system
+        files: \.(js|mjs|cjs)$
+        exclude: ^site/data\.js$
+      - id: prettier
+        name: prettier --check
+        entry: npx --no-install prettier --check --ignore-unknown
+        language: system
+        types: [text]
+      - id: stylelint
+        name: stylelint
+        entry: npx --no-install stylelint
+        language: system
+        files: \.css$
+      - id: htmlhint
+        name: htmlhint
+        entry: npx --no-install htmlhint
+        language: system
+        files: \.html$
