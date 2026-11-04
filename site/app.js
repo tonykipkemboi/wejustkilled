@@ -59,8 +59,6 @@
   // Brand domain printed on certificates; fixed so www/preview hosts don't leak in.
   const SITE = 'wejustkilled.app';
   const pageURL = (h) => location.href.split('#')[0] + h;
-  const intent = (text, url) =>
-    'https://x.com/intent/post?text=' + encodeURIComponent(text) + (url ? '&url=' + encodeURIComponent(url) : '');
   /* ---------------- security helpers ----------------
    Everything in kills.json and the URL hash is treated as untrusted. URLs are only
    accepted for the hosts we expect; anything else becomes null and is not rendered. */
@@ -118,10 +116,6 @@
   });
 
   const I = {
-    knife:
-      '<svg class="kf-x" viewBox="0 0 44 24" aria-hidden="true"><path d="M2 13 L28 6 L40 10 L28 15 Z" fill="currentColor"/><rect x="28" y="8" width="3" height="8" rx="1" fill="#888" transform="rotate(-8 29 12)"/><rect x="31" y="9" width="11" height="5" rx="2" fill="#5a3b26" transform="rotate(-8 36 12)"/></svg>',
-    skull:
-      '<svg class="kf-x" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2C7 2 3.5 5.6 3.5 10.2c0 2.7 1.2 4.6 3 5.8V19a1 1 0 001 1h1.5v-2h1.5v2h3v-2h1.5v2H16.5a1 1 0 001-1v-3c1.8-1.2 3-3.1 3-5.8C20.5 5.6 17 2 12 2zM8.5 13.5a2 2 0 110-4 2 2 0 010 4zm7 0a2 2 0 110-4 2 2 0 010 4z"/></svg>',
     heart:
       '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 21s-7.5-4.6-9.6-9.3C.9 8.3 3 4.5 6.8 4.5c2.1 0 3.6 1.2 5.2 3 1.6-1.8 3.1-3 5.2-3 3.8 0 5.9 3.8 4.4 7.2C19.5 16.4 12 21 12 21z"/></svg>',
     rt: '<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M4 9V7a2 2 0 012-2h11l-3-3M20 15v2a2 2 0 01-2 2H7l3 3"/></svg>',
@@ -130,54 +124,105 @@
     mag: '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6" stroke="currentColor" stroke-width="2.5" fill="none"/><path d="M15 15l6 6" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>',
   };
 
-  /* ---------------- sound (off by default) ---------------- */
+  /* ---------------- sound (off by default) ----------------
+   Real CC0 foley (see docs/CREDITS.md), fetched lazily: nothing is downloaded until sound is
+   switched on, or until someone reaches for the light cord. A small voice pool with slight pitch and
+   volume variation keeps repeated sounds from sounding mechanical. */
   const Sound = (() => {
     let on = false,
-      ctx = null;
+      ctx = null,
+      out = null,
+      armed = false;
     try {
       on = localStorage.getItem('wjk-sound') === '1';
     } catch {
       /* storage blocked: keep sound off */
     }
-    const ac = () => ctx || (ctx = new (window.AudioContext || window.webkitAudioContext)());
-    const thud = () => {
-      if (!on) return;
-      const c = ac(),
-        t = c.currentTime;
-      const o = c.createOscillator(),
-        g = c.createGain();
-      o.type = 'sine';
-      o.frequency.setValueAtTime(140, t);
-      o.frequency.exponentialRampToValueAtTime(45, t + 0.22);
-      g.gain.setValueAtTime(0.35, t);
-      g.gain.exponentialRampToValueAtTime(0.001, t + 0.3);
-      o.connect(g).connect(c.destination);
-      o.start(t);
-      o.stop(t + 0.32);
-      const b = c.createBuffer(1, c.sampleRate * 0.08, c.sampleRate),
-        d = b.getChannelData(0);
-      for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * (1 - i / d.length) ** 3;
-      const n = c.createBufferSource(),
-        ng = c.createGain();
-      n.buffer = b;
-      ng.gain.value = 0.25;
-      n.connect(ng).connect(c.destination);
-      n.start(t);
+    // group: [files, gain, pitch spread, min gap between plays in ms]
+    const G = {
+      key: [['key-1', 'key-2', 'key-3'], 0.55, 0.06, 40],
+      paper: [['paper-1', 'paper-2'], 0.7, 0.05, 70],
+      open: [['paper-2'], 0.8, 0.04, 120],
+      stamp: [['stamp'], 0.9, 0.03, 250],
+      shutter: [['shutter'], 0.85, 0.03, 250],
+      folder: [['folder'], 0.75, 0.04, 200],
+      chain: [['chain'], 0.9, 0.04, 150],
     };
-    const tick = () => {
-      if (!on) return;
-      const c = ac(),
-        t = c.currentTime;
-      const o = c.createOscillator(),
-        g = c.createGain();
-      o.type = 'square';
-      o.frequency.value = 1800;
-      g.gain.setValueAtTime(0.025, t);
-      g.gain.exponentialRampToValueAtTime(0.0001, t + 0.04);
-      o.connect(g).connect(c.destination);
-      o.start(t);
-      o.stop(t + 0.05);
+    const buf = Object.create(null),
+      req = Object.create(null),
+      last = Object.create(null),
+      voices = [];
+    let ext = null;
+    const sfxExt = () =>
+      (ext ||= document.createElement('audio').canPlayType('audio/webm; codecs="opus"') ? 'webm' : 'mp3');
+    const ac = () => {
+      if (!ctx) {
+        const AC = window.AudioContext || window.webkitAudioContext;
+        if (!AC) return null;
+        ctx = new AC();
+        out = ctx.createGain();
+        out.gain.value = 0.9;
+        out.connect(ctx.destination);
+      }
+      return ctx;
     };
+    const raw = Object.create(null);
+    // bytes only: safe before any user gesture (no AudioContext needed)
+    const fetchRaw = (name) =>
+      (raw[name] ||= fetch(`assets/sfx/${name}.${sfxExt()}`).then((r) =>
+        r.ok ? r.arrayBuffer() : Promise.reject(new Error(r.status)),
+      ));
+    const load = (name) =>
+      (req[name] ||= fetchRaw(name)
+        .then((b) => new Promise((ok, no) => ac().decodeAudioData(b.slice(0), ok, no)))
+        .then((b) => (buf[name] = b))
+        .catch(() => null));
+    const preload = (...groups) => {
+      if (!armed || !ac()) return;
+      (groups.length ? groups : Object.keys(G)).forEach((g) => G[g][0].forEach(load));
+    };
+    const start = (name, gain, spread) => {
+      const c = ctx,
+        b = buf[name];
+      if (!c || !b) return;
+      if (c.state === 'suspended') c.resume().catch(() => {});
+      while (voices.length >= 6) {
+        try {
+          voices.shift().stop();
+        } catch {
+          /* already stopped */
+        }
+      }
+      const s = c.createBufferSource(),
+        g = c.createGain();
+      s.buffer = b;
+      s.playbackRate.value = 1 + (Math.random() * 2 - 1) * spread;
+      g.gain.value = gain * (0.85 + Math.random() * 0.3);
+      s.connect(g).connect(out);
+      s.onended = () => voices.splice(voices.indexOf(s) >>> 0, 1);
+      voices.push(s);
+      s.start();
+    };
+    // force: play even with sound off (only used for the light cord, a direct physical gesture).
+    const play = (group, { force = false, vol = 1 } = {}) => {
+      if ((!on && !force) || !armed || !has(G, group)) return;
+      const [files, gain, spread, gap] = G[group],
+        now = performance.now();
+      if (now - (last[group] || 0) < gap) return;
+      last[group] = now;
+      if (!ac()) return;
+      const name = files[(Math.random() * files.length) | 0];
+      if (buf[name]) start(name, gain * vol, spread);
+      // first use: fetch, then play only if it arrives quickly enough to still feel connected
+      else load(name).then((b) => b && performance.now() - now < 350 && start(name, gain * vol, spread));
+    };
+    // AudioContext may only start after a user gesture; until then every sound is a no-op.
+    const arm = () => {
+      if (armed) return;
+      armed = true;
+      if (on) preload();
+    };
+    ['pointerdown', 'keydown'].forEach((t) => addEventListener(t, arm, { capture: true, passive: true }));
     const set = (v) => {
       on = v;
       try {
@@ -189,19 +234,357 @@
       b.setAttribute('aria-pressed', v);
       b.title = v ? 'Sound is on' : 'Sound is off';
       if (v) {
-        ac().resume?.();
-        thud();
+        arm();
+        preload();
+        play('paper');
       }
     };
     return {
-      thud,
-      tick,
+      play,
+      prefetch: (...g) => g.forEach((k) => has(G, k) && G[k][0].forEach((n) => fetchRaw(n).catch(() => {}))),
       set,
       get on() {
         return on;
       },
     };
   })();
+
+  /* ---------------- theme: light / dark ----------------
+   theme.js (in <head>) already set data-theme before first paint; this keeps it in sync. */
+  const Theme = (() => {
+    const root = document.documentElement,
+      mq = matchMedia('(prefers-color-scheme: light)'),
+      btn = $('#lights');
+    let stored = null;
+    try {
+      stored = localStorage.getItem('wjk-theme');
+    } catch {
+      /* storage blocked: follow the OS */
+    }
+    const get = () => (root.dataset.theme === 'light' ? 'light' : 'dark');
+    const apply = (t) => {
+      root.dataset.theme = t;
+      $$('meta[name="theme-color"]').forEach((m) => m.setAttribute('content', t === 'light' ? '#e6d7b2' : '#11100e'));
+      btn.setAttribute('aria-pressed', String(t === 'light'));
+      btn.title = t === 'light' ? 'Lights are on. Pull for night shift.' : 'Lights are off. Pull for day shift.';
+      Cord.redraw();
+    };
+    mq.addEventListener?.('change', (e) => !stored && apply(e.matches ? 'light' : 'dark'));
+    const set = (t) => {
+      stored = t;
+      try {
+        localStorage.setItem('wjk-theme', t);
+      } catch {
+        /* storage blocked: choice lasts for this visit */
+      }
+      if (!reduced()) {
+        root.classList.add('theme-anim');
+        clearTimeout(set.t);
+        set.t = setTimeout(() => root.classList.remove('theme-anim'), 450);
+      }
+      apply(t);
+    };
+    return { get, set, init: () => apply(get()), toggle: () => set(get() === 'light' ? 'dark' : 'light') };
+  })();
+
+  /* ---------------- the light cord: a verlet rope, no libraries ----------------
+   A ball chain hangs from the top-right corner. Brushing it with the pointer pushes it;
+   pulling the handle (click, tap, Enter/Space, or drag down and release) toggles the lights.
+   The simulation sleeps when the chain is at rest or the tab is hidden. */
+  const Cord = (() => {
+    const wrap = $('#cord'),
+      cv = $('#cord-c'),
+      btn = $('#lights'),
+      x = cv.getContext('2d');
+    const N = 15;
+    let W = 0,
+      H = 0,
+      ax = 0,
+      seg = 7,
+      len = 0,
+      dpr = 1,
+      raf = 0,
+      still = 0,
+      drag = null,
+      anim = null,
+      stretch = 1,
+      rect = null,
+      acc = 0,
+      tPrev = 0,
+      awake = false;
+    const P = Array.from({ length: N }, () => ({ x: 0, y: 0, px: 0, py: 0 }));
+    const small = () => innerWidth <= 560;
+    const layout = () => {
+      W = 96;
+      H = small() ? 170 : 200;
+      len = small() ? 96 : 118;
+      seg = len / (N - 1);
+      dpr = Math.min(devicePixelRatio || 1, 2);
+      cv.width = Math.round(W * dpr);
+      cv.height = Math.round(H * dpr);
+      cv.style.width = W + 'px';
+      cv.style.height = H + 'px';
+      ax = W - 30;
+      P.forEach((p, i) => {
+        p.x = p.px = ax;
+        p.y = p.py = i * seg;
+      });
+      rect = null;
+      draw();
+    };
+    const box = () => (rect ||= cv.getBoundingClientRect());
+    const wake = () => {
+      still = 0;
+      if (!raf) {
+        tPrev = performance.now();
+        raf = requestAnimationFrame(tick);
+      }
+    };
+    const damp = () => (reduced() ? 0.8 : 0.988);
+    const step = () => {
+      const g = 0.38,
+        d = damp();
+      for (let i = 1; i < N; i++) {
+        const p = P[i],
+          vx = (p.x - p.px) * d,
+          vy = (p.y - p.py) * d;
+        p.px = p.x;
+        p.py = p.y;
+        p.x += vx;
+        p.y += vy + g;
+      }
+      const hand = N - 1;
+      let target = null;
+      if (drag) target = drag;
+      else if (anim) {
+        const t = Math.min(1, (performance.now() - anim.t0) / anim.dur),
+          e = t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2;
+        target = { x: anim.x, y: anim.y0 + anim.dy * e };
+        if (t >= 1) {
+          anim.done?.();
+          anim = null;
+          target = null;
+        }
+      }
+      if (target) {
+        const dx = target.x - ax,
+          dy = Math.max(10, target.y),
+          dist = Math.hypot(dx, dy),
+          max = len * 1.42,
+          k = dist > max ? max / dist : 1;
+        P[hand].x = ax + dx * k;
+        P[hand].y = dy * k;
+        stretch = Math.max(1, Math.min(1.42, (dist * k) / len));
+      } else stretch += (1 - stretch) * 0.35;
+      const rest = seg * stretch;
+      for (let it = 0; it < 14; it++) {
+        P[0].x = ax;
+        P[0].y = 0;
+        for (let i = 0; i < N - 1; i++) {
+          const a = P[i],
+            b = P[i + 1],
+            dx = b.x - a.x,
+            dy = b.y - a.y,
+            dd = Math.hypot(dx, dy) || 0.001,
+            diff = (dd - rest) / dd;
+          // inverse masses: the anchor is fixed, the handle is heavier, a held handle is pinned
+          const wa = i === 0 ? 0 : 1,
+            wb = i + 1 === hand ? (target ? 0 : 0.4) : 1,
+            sum = wa + wb || 1;
+          a.x += dx * diff * (wa / sum);
+          a.y += dy * diff * (wa / sum);
+          b.x -= dx * diff * (wb / sum);
+          b.y -= dy * diff * (wb / sum);
+        }
+      }
+      let m = 0;
+      for (let i = 1; i < N; i++) m = Math.max(m, Math.abs(P[i].x - P[i].px) + Math.abs(P[i].y - P[i].py));
+      still = m < 0.015 && !drag && !anim && Math.abs(stretch - 1) < 0.002 ? still + 1 : 0;
+    };
+    const ink = () => {
+      const light = document.documentElement.dataset.theme === 'light';
+      return light
+        ? { bead: '#6b5530', hi: '#a98b55', bob: '#5a2a1e', bob2: '#8e4632', glow: 'rgba(0,0,0,0)' }
+        : { bead: '#a48c5d', hi: '#e4cf9c', bob: '#c9b48a', bob2: '#f3e6c4', glow: 'rgba(0,0,0,.45)' };
+    };
+    const draw = () => {
+      const c = ink();
+      x.setTransform(dpr, 0, 0, dpr, 0, 0);
+      x.clearRect(0, 0, W, H);
+      // ball chain: beads spaced along the polyline
+      let carry = 0;
+      const gap = 4.6;
+      x.fillStyle = c.bead;
+      for (let i = 0; i < N - 1; i++) {
+        const a = P[i],
+          b = P[i + 1],
+          L = Math.hypot(b.x - a.x, b.y - a.y);
+        for (let t = carry; t < L; t += gap) {
+          const k = t / L;
+          x.beginPath();
+          x.arc(a.x + (b.x - a.x) * k, a.y + (b.y - a.y) * k, 1.55, 0, 7);
+          x.fill();
+        }
+        carry = (carry - L) % gap;
+        if (carry < 0) carry += gap;
+      }
+      // pull bob, oriented along the last link
+      const a = P[N - 2],
+        b = P[N - 1],
+        ang = Math.atan2(b.y - a.y, b.x - a.x) - Math.PI / 2;
+      x.save();
+      x.translate(b.x, b.y);
+      x.rotate(ang);
+      x.shadowColor = c.glow;
+      x.shadowBlur = 6;
+      x.shadowOffsetY = 2;
+      const gr = x.createLinearGradient(-6, 0, 6, 0);
+      gr.addColorStop(0, c.bob);
+      gr.addColorStop(0.45, c.bob2);
+      gr.addColorStop(1, c.bob);
+      x.fillStyle = gr;
+      x.beginPath();
+      x.moveTo(0, 0);
+      x.bezierCurveTo(5, 3, 7, 13, 6, 18);
+      x.quadraticCurveTo(0, 25, -6, 18);
+      x.bezierCurveTo(-7, 13, -5, 3, 0, 0);
+      x.fill();
+      x.restore();
+      btn.style.transform = `translate3d(${(b.x - 22).toFixed(1)}px,${(b.y - 10).toFixed(1)}px,0)`;
+      wrap.classList.toggle('armed', !!drag && drag.y > len + 30);
+    };
+    const tick = (t) => {
+      acc += Math.min(50, t - tPrev);
+      tPrev = t;
+      while (acc >= 1000 / 60) {
+        step();
+        acc -= 1000 / 60;
+      }
+      draw();
+      raf = still > 45 ? 0 : requestAnimationFrame(tick);
+    };
+    const toggle = () => {
+      Sound.play('chain', { force: true, vol: Sound.on ? 1 : 0.55 });
+      Theme.toggle();
+    };
+    // a click, tap or key press pulls the cord down and lets go; the theme flips at the bottom
+    const pull = () => {
+      if (anim) return;
+      const h = P[N - 1];
+      anim = { t0: performance.now(), dur: reduced() ? 90 : 150, x: h.x, y0: h.y, dy: 34, done: toggle };
+      wake();
+    };
+    let downAt = null,
+      skipClick = false;
+    btn.addEventListener('pointerdown', (e) => {
+      if (e.button) return;
+      Sound.prefetch('chain');
+      const r = box();
+      downAt = {
+        x: e.clientX,
+        y: e.clientY,
+        ox: P[N - 1].x - (e.clientX - r.left),
+        oy: P[N - 1].y - (e.clientY - r.top),
+      };
+      btn.setPointerCapture(e.pointerId);
+    });
+    btn.addEventListener('pointermove', (e) => {
+      if (!downAt) return;
+      const r = box();
+      if (!drag && Math.hypot(e.clientX - downAt.x, e.clientY - downAt.y) < 5) return;
+      drag = { x: e.clientX - r.left + downAt.ox, y: e.clientY - r.top + downAt.oy };
+      wake();
+    });
+    const up = () => {
+      if (!downAt) return;
+      downAt = null;
+      if (drag) {
+        skipClick = true;
+        const pulled = drag.y > len + 30;
+        drag = null;
+        if (pulled) toggle();
+        wake();
+      }
+    };
+    btn.addEventListener('pointerup', up);
+    btn.addEventListener('pointercancel', () => {
+      downAt = null;
+      drag = null;
+      wake();
+    });
+    // click covers mouse, touch and keyboard (Enter/Space on a <button>)
+    btn.addEventListener('click', () => {
+      if (skipClick) {
+        skipClick = false;
+        return;
+      }
+      pull();
+    });
+    btn.addEventListener('pointerenter', () => Sound.prefetch('chain'));
+    btn.addEventListener('focus', () => Sound.prefetch('chain'));
+    // brushing: pointer movement near the chain nudges the beads it passes
+    let last = null;
+    const brush = (cx, cy) => {
+      if (reduced() || drag) return;
+      const r = box(),
+        lx = cx - r.left,
+        ly = cy - r.top;
+      if (lx < -20 || ly < -10 || lx > W + 20 || ly > H + 20) {
+        last = null;
+        return;
+      }
+      if (last) {
+        const dx = lx - last.x,
+          dy = ly - last.y;
+        let hit = false;
+        for (let i = 1; i < N; i++) {
+          const p = P[i],
+            d = Math.hypot(p.x - lx, p.y - ly);
+          if (d < 16) {
+            const f = (1 - d / 16) * 0.55;
+            p.px -= dx * f;
+            p.py -= dy * f * 0.4;
+            hit = true;
+          }
+        }
+        if (hit) wake();
+      }
+      last = { x: lx, y: ly };
+    };
+    addEventListener('pointermove', (e) => e.pointerType === 'mouse' && brush(e.clientX, e.clientY), { passive: true });
+    addEventListener(
+      'touchmove',
+      (e) => {
+        const t = e.touches[0];
+        if (t) brush(t.clientX, t.clientY);
+      },
+      { passive: true },
+    );
+    addEventListener('touchend', () => (last = null), { passive: true });
+    let rz;
+    addEventListener('resize', () => {
+      clearTimeout(rz);
+      rz = setTimeout(layout, 120);
+    });
+    // a little sway on load so people notice it (skipped with reduced motion)
+    const init = () => {
+      layout();
+      if (!reduced()) {
+        P[N - 1].px += 6;
+        P[N - 2].px += 3;
+        wake();
+      }
+      awake = true;
+    };
+    return {
+      init,
+      pull,
+      redraw: () => awake && (still ? wake() : draw()),
+      _state: () => ({ resting: !raf, points: P.map((p) => [+p.x.toFixed(1), +p.y.toFixed(1)]) }),
+    };
+  })();
+  Theme.init();
+  Cord.init();
 
   /* ---------------- data ---------------- */
   const loadData = async () => {
@@ -220,6 +603,25 @@
       });
     }
   };
+  // Self-hosted logos (scripts/fetch_logos.py). Paths are validated so the file can only point at assets/logos/.
+  let LOGO = { victims: Object.create(null), killers: Object.create(null) };
+  const LOGO_RE = /^(k\/)?[a-z0-9_-]{1,60}\.webp$/;
+  const loadLogos = () =>
+    fetch('assets/logos/logos.json')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((j) => {
+        const pick = (o, val) => {
+          const m = Object.create(null);
+          if (o && typeof o === 'object')
+            for (const [k, v] of Object.entries(o)) {
+              const f = val(v);
+              if (typeof f === 'string' && LOGO_RE.test(f)) m[String(k)] = 'assets/logos/' + f;
+            }
+          return m;
+        };
+        LOGO = { victims: pick(j?.victims, (v) => v?.file), killers: pick(j?.killers, (v) => v) };
+      })
+      .catch(() => {});
   const vstat = (k) => {
     const v = k.verification;
     if (!v || typeof v !== 'object') return {};
@@ -336,9 +738,28 @@
   };
 
   /* ---------------- shared bits ---------------- */
+  /* Victim logo (self-hosted) or a typeset monogram. Never fetched from a third party at runtime. */
+  const initials = (name) => {
+    const w = String(name || '?')
+      .replace(/^the\s+/i, '')
+      .split(/[\s-]+/)
+      .filter(Boolean);
+    return ((w[0]?.[0] || '?') + (w.length > 1 ? w[1][0] : (w[0]?.[1] ?? ''))).toUpperCase();
+  };
+  const logoSrc = (name) => (has(LOGO.victims, slug(name)) ? LOGO.victims[slug(name)] : null);
+  const logo = (name, cls = 'lg') => {
+    const src = logoSrc(name);
+    return src
+      ? `<img class="${cls}" src="${esc(src)}" alt="" loading="lazy" decoding="async" width="128" height="128" data-i="${esc(initials(name))}">`
+      : `<span class="${cls} mono m${hash32(slug(name)) % 6}" aria-hidden="true">${esc(initials(name))}</span>`;
+  };
+  const avatarSrc = (o, sz) => {
+    const h = String(o.handle || '').toLowerCase();
+    return has(LOGO.killers, h) ? LOGO.killers[h] : o.avatar ? avSize(o.avatar, sz) : null;
+  };
   const avatar = (o, cls = 'av', sz = 'bigger') =>
-    o.avatar
-      ? `<img class="${cls}" src="${esc(avSize(o.avatar, sz))}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" data-i="${esc((o.name || o.handle || '?').trim()[0] || '?')}">`
+    avatarSrc(o, sz)
+      ? `<img class="${cls}" src="${esc(avatarSrc(o, sz))}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" data-i="${esc((o.name || o.handle || '?').trim()[0] || '?')}">`
       : `<span class="${cls} avi" aria-hidden="true">${esc((o.name || o.handle || '?').trim()[0] || '?').toUpperCase()}</span>`;
   document.addEventListener(
     'error',
@@ -393,12 +814,12 @@
     const alive = k.victims.some((v) => BR.has(v));
     const long = !big && k.text.length > 380;
     return `<article class="card${big ? ' big' : ''}" data-sty="--r:${r.toFixed(2)}deg;--tr:${tr}deg;--er:${er * 0.6}deg">
-  <header class="card-h"><a href="#/case/${k.id}">CASE Nº ${k.case}</a>${k.conf ? `<span class="det" title="Our detectives re-checked this post and its replies">${I.mag}verified<span class="det-x"> by detectives</span></span>` : ''}<time datetime="${esc(k.created_at)}">${fdate(k.created_at)}</time></header>
+  <header class="card-h"><a href="#/case/${k.id}">Case Nº ${k.case}</a>${k.conf ? `<span class="det" title="Our detectives re-checked this post and its replies">${I.mag}verified<span class="det-x"> by detectives</span></span>` : ''}<time datetime="${esc(k.created_at)}">${fdate(k.created_at)}</time></header>
   ${alive ? '<div class="stamp" aria-label="Victim still alive">STILL ALIVE</div>' : ''}
-  <div class="card-v">Victim${k.victims.length > 1 ? 's' : ''} ${k.victims.map((v) => `<a class="vtag" href="#/victim/${slug(v)}">${esc(v)}</a>`).join('')}</div>
+  <div class="card-v"><span class="lbl">Victim${k.victims.length > 1 ? 's' : ''}</span>${k.victims.map((v) => `<a class="vtag" href="#/victim/${slug(v)}">${BR.has(v) ? logo(v, 'lg lg-s') : ''}<span>${esc(v)}</span></a>`).join('')}</div>
   <div class="who">${avatar(k)}<div><div class="who-n">${esc(k.name)}${k.verified ? I.chk : ''}</div><div class="who-h"><a href="#/killer/${esc(k.handle.toLowerCase())}">@${esc(k.handle)}</a>${k.killer ? ` · weapon: ${esc(k.killer)}` : ''}</div></div></div>
-  <p class="q${long ? ' clamp' : ''}">${linkify(k.text, q)}</p>${long ? '<button class="more-txt" type="button">Read the full statement ↓</button>' : ''}
-  ${k.image && k.url ? `<a class="ev" href="${esc(k.url)}" target="_blank" rel="noopener noreferrer" aria-label="Evidence photo, open the original post"><img src="${esc(k.image)}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer"><span>exhibit A</span></a>` : ''}
+  <p class="q${long ? ' clamp' : ''}">${linkify(k.text, q)}</p>${long ? '<button class="more-txt" type="button">Read the full statement</button>' : ''}
+  ${k.image && k.url ? `<a class="ev" href="${esc(k.url)}" target="_blank" rel="noopener noreferrer" aria-label="Evidence photo, open the original post"><img src="${esc(k.image)}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer"><span>Exhibit A</span></a>` : ''}
   <footer class="card-f"><span class="m" title="Likes">${I.heart}${fmt(k.likes)}</span><span class="m" title="Reposts">${I.rt}${fmt(k.reposts)}</span>${k.views ? `<span class="m" title="Views">${I.eye}${fmt(k.views)}</span>` : ''}<span class="sp"></span><button class="lnk" type="button" data-copy="#/case/${k.id}">copy link</button>${k.url ? `<a class="x" href="${esc(k.url)}" target="_blank" rel="noopener noreferrer">View on X ↗</a>` : ''}</footer>
   </article>`;
   };
@@ -409,7 +830,7 @@
     clearTimeout(t._t);
     t._t = setTimeout(() => (t.hidden = true), 2200);
   };
-  const copy = async (url, msg = 'Link copied 🔪') => {
+  const copy = async (url, msg = 'Link copied to the clipboard') => {
     try {
       await navigator.clipboard.writeText(url);
       toast(msg);
@@ -483,11 +904,11 @@
     const setBy = (r) => {
       setHTML(
         by,
-        `claimed by <a href="${esc(r.k.url)}" target="_blank" rel="noopener noreferrer">@${esc(r.k.handle)}</a> · ${fdate(r.k.created_at)} · ${fmt(r.k.likes)} likes at the scene · <a href="#/victim/${slug(r.v)}">death certificate →</a>`,
+        `claimed by <a href="${esc(r.k.url)}" target="_blank" rel="noopener noreferrer">@${esc(r.k.handle)}</a> · ${fdate(r.k.created_at)} · ${fmt(r.k.likes)} likes at the scene · <a href="#/check/${slug(r.v)}">run the check</a>`,
       );
     };
     let i = 0;
-    hv.textContent = list[0].v.toUpperCase() + '.';
+    hv.textContent = list[0].v + '.';
     setLen(hv.textContent);
     setBy(list[0]);
     if (reduced()) return;
@@ -500,7 +921,7 @@
       setLen(target);
       for (let n = 1; n <= target.length; n++) {
         hv.textContent = target.slice(0, n);
-        Sound.tick();
+        Sound.play('key');
         await new Promise((r) => setTimeout(r, 55 + Math.random() * 40));
       }
     };
@@ -511,7 +932,7 @@
       }
       i = (i + 1) % list.length;
       by.classList.add('fade');
-      await type(list[i].v.toUpperCase() + '.');
+      await type(list[i].v + '.');
       setBy(list[i]);
       by.classList.remove('fade');
       heroTimer = setTimeout(step, 2800);
@@ -523,7 +944,9 @@
     );
     setHTML(
       $('#dead-try'),
-      'Try: ' + tries.map((t) => `<button type="button" data-try="${esc(t)}">${esc(t)}</button>`).join(' · '),
+      'Try ' +
+        tries.map((t) => `<button type="button" data-try="${esc(t)}">${esc(t)}</button>`).join(', ') +
+        ', or anything you ship.',
     );
   };
   let heroVisible = true;
@@ -538,10 +961,10 @@
     const row = (it, isNew) => {
       if (it.m) {
         const v = it.m;
-        return `<li><a class="kf multi${isNew ? ' new' : ''}" href="#/victim/${v.slug}"><span class="kf-k">MULTI-KILL</span>${I.skull}<span class="kf-v">${esc(v.name)} ×${v.kills.length}</span></a></li>`;
+        return `<li><a class="kf multi${isNew ? ' new' : ''}" href="#/victim/${v.slug}"><span class="kf-t">ALERT</span><span class="kf-k">Repeat victim</span><span class="kf-x">·</span><span class="kf-v">${esc(v.name)} ×${v.kills.length}</span></a></li>`;
       }
       const k = it.k;
-      return `<li><a class="kf${isNew ? ' new' : ''}" href="#/case/${k.id}" title="${esc(k.name)} claims to have killed ${esc(k.victims.join(', '))}">${avatar(k, 'av', 'normal')}<span class="kf-k">${esc(k.killer || k.name)}</span>${I.knife}<span class="kf-v">${esc(k.victims.join(' + '))}</span></a></li>`;
+      return `<li><a class="kf${isNew ? ' new' : ''}" href="#/case/${k.id}" title="${esc(k.name)} claims to have killed ${esc(k.victims.join(', '))}"><span class="kf-t">${fdate(k.created_at, { month: '2-digit', day: '2-digit' })}</span><span class="kf-k">${esc(k.killer || k.name)}</span><span class="kf-x">killed</span><span class="kf-v">${esc(k.victims.join(' + '))}</span></a></li>`;
     };
     const max = () => (innerWidth <= 560 ? 3 : 6);
     let p = 0;
@@ -609,65 +1032,323 @@
     sel = -1;
   };
   let sel = -1;
-  const verdictHTML = (q) => {
+
+  /* ---------------- share: per-context copy, menu, native share with the card PNG ---------------- */
+  const pick = (a) => a[(Math.random() * a.length) | 0];
+  const SHARE = {
+    safe: (name) =>
+      pick([
+        `Ran ${name} through the We Just Killed morgue. Verdict: MARKED SAFE. Nobody has “just killed” it… yet.`,
+        `${name} is still alive. No launch post has claimed the kill (for now).`,
+        `Good news for ${name}: zero kill claims on file. Somebody’s launch video is surely still rendering.`,
+        `Checked the morgue. ${name} has a pulse. Enjoy it while it lasts.`,
+      ]),
+    killed: (v) => {
+      const n = v.kills.length,
+        k = v.last;
+      if (!v.brand) return `“${v.name}” has been “just killed” ${times(n)} on X. Status: unconfirmed, probably fine.`;
+      if (n === 1)
+        return pick([
+          `${v.name} was “just killed” by @${k.handle}. Doctors describe it as stable and still billing.`,
+          `RIP ${v.name} (killed once, by @${k.handle}). It shipped an update the next morning.`,
+        ]);
+      if (n >= 5)
+        return pick([
+          `${v.name} is a serial victim: pronounced dead ${n} times on X and still shipping on Tuesdays.`,
+          `${v.name} has ${n} kill claims on file and zero funerals. The morgue is running out of drawers.`,
+        ]);
+      return pick([
+        `${v.name} has been “just killed” ${times(n)} by launch posts. Still taking signups.`,
+        `RIP ${v.name}, ${times(n)} over. Cause of death: somebody’s launch video. Status: alive.`,
+      ]);
+    },
+    killer: (a) =>
+      `@${a.handle} has ${plural(a.kills.length, 'kill claim')} on file at the Department of Launch Homicide. Considered armed with a demo video.`,
+    case: (k) =>
+      `Case Nº ${k.case}: @${k.handle} claims to have killed ${k.victims.join(' and ')}. The victim could not be reached for comment (it was shipping).`,
+    cert: (v) =>
+      `Official death certificate: ${v.name}, pronounced dead ${times(v.kills.length)}. Status: ${v.brand ? 'still alive' : 'probably fine'}. Filed by the Department of Launch Homicide.`,
+  };
+  // Native share payloads, keyed by a counter so nothing user-controlled ends up in markup as code.
+  const shares = new Map();
+  let shareN = 0;
+  const shareMenu = (text, hash, card = null) => {
+    const url = pageURL(hash),
+      t = encodeURIComponent(text),
+      u = encodeURIComponent(url),
+      tu = encodeURIComponent(text + ' ' + url),
+      id = String(++shareN);
+    shares.set(id, { text, url, card });
+    const T = [
+      ['X', `https://x.com/intent/post?text=${t}&url=${u}`],
+      ['Facebook', `https://www.facebook.com/sharer/sharer.php?u=${u}`],
+      ['LinkedIn', `https://www.linkedin.com/sharing/share-offsite/?url=${u}`],
+      ['Threads', `https://www.threads.com/intent/post?text=${tu}`],
+      ['WhatsApp', `https://wa.me/?text=${tu}`],
+      ['Reddit', `https://www.reddit.com/submit?url=${u}&title=${t}`],
+    ];
+    return `<details class="share" data-share-id="${id}"><summary class="btn">Share<span class="caret-d" aria-hidden="true"></span></summary><div class="share-m"><p class="share-t">${esc(text)}</p>${
+      navigator.share
+        ? `<button type="button" class="share-i share-n" data-share="${id}">Share${card ? ' with the card' : ''}…</button>`
+        : ''
+    }${T.map(([n, h]) => `<a class="share-i" href="${esc(h)}" target="_blank" rel="noopener noreferrer">${n}</a>`).join('')}<a class="share-i" href="${esc('sms:?&body=' + tu)}">Messages / SMS</a><button type="button" class="share-i" data-copy-only="${esc(hash)}">Copy link</button></div></details>`;
+  };
+  const nativeShare = async (id) => {
+    const s = shares.get(id);
+    if (!s) return;
+    const data = { title: 'We Just Killed', text: s.text, url: s.url };
+    try {
+      const blob = s.card ? await s.card() : null;
+      if (blob) {
+        const f = new File([blob], 'we-just-killed.png', { type: 'image/png' });
+        if (navigator.canShare?.({ files: [f] })) data.files = [f];
+      }
+    } catch {
+      /* no card: share the link alone */
+    }
+    navigator.share(data).catch(() => {});
+  };
+
+  /* ---------------- check result: is my product dead? ---------------- */
+  const SAFE_LINES = [
+    () => 'Marked safe from being “just killed” today.',
+    (n) => `Phew. ${n} is still alive (for now).`,
+    (n) => `No one has claimed to kill ${n}… yet.`,
+    (n) => `${n} has a clean record. Suspiciously clean.`,
+    (n) => `The coroner checked twice. ${n} has a pulse.`,
+    () => 'Zero bodies on file. Carry on shipping.',
+  ];
+  const cleanName = (q) =>
+    String(q)
+      // eslint-disable-next-line no-control-regex -- strip control characters from a URL-provided name
+      .replace(/[\u0000-\u001f\u007f<>]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim()
+      .slice(0, 40);
+  const checkHash = (name) => '#/check/' + (V[slug(name)] ? slug(name) : encodeURIComponent(name));
+  const caseRow = (k) =>
+    `<li><a href="#/case/${k.id}">${avatar(k, 'av', 'normal')}<span class="cr-h">@${esc(k.handle)}</span><span class="cr-d">${fdate(k.created_at)}</span><span class="cr-q">${esc(causeLine(k.text, 90))}</span></a></li>`;
+  const checkHTML = (q) => {
     const { primary: v, rel } = lookup(q);
     if (!v) {
-      const n = norm(q),
+      const name = cleanName(q) || 'Your product',
+        n = norm(name),
         wit = n.length >= 3 ? K.filter((k) => norm(k.text).includes(n)).length : 0,
-        name = String(q).trim().slice(0, 40);
-      return `<div class="verdict"><p class="eyebrow">Coroner’s verdict</p><h2 class="vname" id="modal-title">${esc(name || '???')}</h2><div class="vstamp g">NOT DEAD YET</div>
-      <p class="vstat">No launch post on file claims to have killed it.</p><p class="vsub">Give it a week.${wit ? ` It has been spotted at <a href="#/cases?q=${encodeURIComponent(name)}">${plural(wit, 'crime scene')}</a> though, so watch your back.` : ''}</p>
-      <div class="m-acts"><a class="btn" href="#/morgue">Browse the morgue</a><a class="btn" target="_blank" rel="noopener noreferrer" href="${intent(`I checked if ${name} is dead. Verdict: not dead yet. Give it a week 🔪`, pageURL('#/verdict/' + encodeURIComponent(name)))}">Share on X</a></div></div>`;
+        line = pick(SAFE_LINES)(esc(name));
+      return `<article class="result safe"><p class="eyebrow r-eb">Check result · Form DLH-0</p>
+      <div class="r-id"><span class="r-logo" id="r-logo">${logo(name, 'lg lg-l')}</span><div><h2 class="r-name" id="modal-title">${esc(name)}</h2><p class="r-kc">Kill claims on file: <b>0</b></p></div><span class="r-stamp ok">Marked safe</span></div>
+      <p class="r-line">${line}</p>
+      <p class="r-sub">No launch post in the case files claims to have killed it.${wit ? ` It has been mentioned at <a href="#/cases?q=${encodeURIComponent(name)}">${plural(wit, 'crime scene')}</a> though, so watch your back.` : ' Give it a week.'}</p>
+      <figure class="r-card"><span class="r-slot" data-card="safe"></span><figcaption>Your “marked safe” card, ready to post.</figcaption></figure>
+      <div class="r-pick"><label class="btn btn-sm file-l"><input type="file" id="logo-file" accept="image/png,image/jpeg,image/webp,image/gif">Add your logo</label><span>Optional. The image stays on your device and is drawn into the card locally. Nothing is uploaded.</span></div>
+      <div class="m-acts"><button class="btn btn-stamp" type="button" data-dl-safe>Download the card</button>${shareMenu(SHARE.safe(name), checkHash(name), () => safeBlob(name))}<a class="btn" href="#/morgue">Browse the morgue</a></div></article>`;
     }
-    const n = v.kills.length,
-      alive = v.brand;
-    const stamp = n >= 5 ? `SERIAL VICTIM · ${n}×` : n === 1 ? 'KILLED ONCE' : `KILLED ${n} TIMES`;
+    const n = v.kills.length;
+    const stamp = n >= 5 ? `Serial victim · ${n}×` : n === 1 ? 'Killed once' : `Killed ${n} times`;
     const ks = [...new Set(v.kills.map((k) => k.handle.toLowerCase()))].map((h) => A[h]);
     const family = rel.length
       ? `<p class="vrel">Related victims: ${rel
           .slice(0, 5)
-          .map((r) => `<a href="#/verdict/${r.slug}">${esc(r.name)}</a> (${r.kills.length})`)
+          .map((r) => `<a href="#/check/${r.slug}">${esc(r.name)}</a> (${r.kills.length})`)
           .join(', ')}${rel.length > 5 ? '…' : ''}</p>`
       : '';
-    const shareText = alive
-      ? `${v.name} has been killed ${times(n)} and is somehow still alive 🔪`
-      : `“${v.name}” has been killed ${times(n)}. Status: unconfirmed, probably fine 🔪`;
-    return `<div class="verdict"><p class="eyebrow">Coroner’s verdict · Victim #${v.rank} of ${victims.length}</p><h2 class="vname" id="modal-title">${esc(v.name)}</h2><div class="vstamp">${stamp}</div>
-    <p class="vstat">Status: ${alive ? '<b>still alive.</b>' : '<b class="q">unconfirmed. Probably fine.</b>'}</p>
-    <p class="vsub">First pronounced dead ${fdate(v.first.created_at)} by <a href="#/case/${v.first.id}">@${esc(v.first.handle)}</a>${n > 1 ? `, most recently ${fdate(v.last.created_at)} by <a href="#/case/${v.last.id}">@${esc(v.last.handle)}</a>` : ''}. ${fmt(v.likes)} likes at the scene${n > 1 ? 's' : ''}.</p>
-    <div class="vkillers" aria-label="Suspects">${ks
+    return `<article class="result killed"><p class="eyebrow r-eb">Check result · Victim #${v.rank} of ${victims.length}</p>
+    <div class="r-id"><span class="r-logo">${logo(v.name, 'lg lg-l')}</span><div><h2 class="r-name" id="modal-title">${esc(v.name)}</h2><p class="r-kc">Status: ${v.brand ? '<b>still alive</b>' : '<b>unconfirmed, probably fine</b>'}</p></div><span class="r-stamp">${stamp}</span></div>
+    <p class="r-sub">First pronounced dead ${fdate(v.first.created_at)} by <a href="#/case/${v.first.id}">@${esc(v.first.handle)}</a>${n > 1 ? `, most recently ${fdate(v.last.created_at)} by <a href="#/case/${v.last.id}">@${esc(v.last.handle)}</a>` : ''}. ${fmt(v.likes)} likes at the scene${n > 1 ? 's' : ''}.</p>
+    <div class="r-grid"><div class="r-cases"><h3 class="lbl">On file</h3><ol>${v.kills
+      .slice()
+      .reverse()
+      .slice(0, 4)
+      .map(caseRow)
+      .join(
+        '',
+      )}</ol>${n > 4 ? `<a class="r-all" href="#/victim/${v.slug}">All ${n} case files</a>` : ''}<h3 class="lbl">Claimed by</h3><div class="vkillers">${ks
       .slice(0, 12)
-      .map((a) => avatar(a))
-      .join('')}</div>${family}
-    <div class="m-acts"><a class="btn btn-red" href="#/cert/${v.slug}">📜 Death certificate</a><a class="btn" href="#/victim/${v.slug}">Read ${n > 1 ? `all ${n} case files` : 'the case file'}</a><a class="btn" target="_blank" rel="noopener noreferrer" href="${intent(shareText, pageURL('#/verdict/' + v.slug))}">Share on X</a></div></div>`;
+      .map((a) => `<a href="#/killer/${esc(a.key)}" title="@${esc(a.handle)}">${avatar(a)}</a>`)
+      .join('')}</div></div>
+    <figure class="r-card"><a href="#/cert/${v.slug}" class="r-slot" data-card="cert" aria-label="Open the death certificate"></a><figcaption>Death certificate Nº WJK-${v.first.case}-${String(n).padStart(2, '0')}</figcaption></figure></div>${family}
+    <div class="m-acts"><button class="btn btn-stamp" type="button" data-dl="${v.slug}">Download certificate</button>${shareMenu(SHARE.killed(v), '#/check/' + v.slug, () => certBlob(v))}<a class="btn" href="#/victim/${v.slug}">Read ${n > 1 ? `all ${n} case files` : 'the case file'}</a></div></article>`;
   };
 
-  /* ---------------- death certificate (canvas → PNG) ---------------- */
+  /* ---------------- certificates and cards (canvas → PNG, all drawn locally) ---------------- */
   const fontsReady = (() => {
     let p;
     return () =>
       (p ||= Promise.all(
         [
-          '400 40px Anton',
-          '400 20px "Special Elite"',
-          'italic 900 40px "Playfair Display"',
-          '700 40px "Playfair Display"',
-          '400 30px "Permanent Marker"',
-          '600 20px Inter',
+          '800 40px "Barlow Condensed"',
+          '600 40px "Barlow Condensed"',
+          '400 20px "IBM Plex Mono"',
+          '600 20px "IBM Plex Mono"',
+          'italic 400 30px "Source Serif 4"',
+          '600 40px "Source Serif 4"',
         ].map((f) => document.fonts?.load(f).catch(() => 0)),
       ).then(() => 0));
   })();
-  const causeOf = (v) => {
-    const k = [...v.kills].sort((a, b) => b.likes - a.likes)[0];
-    const t = k.text
+  const causeLine = (text, max = 110) => {
+    const t = String(text)
       .replace(/https?:\/\/\S+/g, '')
       // eslint-disable-next-line security/detect-unsafe-regex -- single code-point alternation, no nested quantifiers (no ReDoS)
       .replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\uf8ff]|\u{FE0F}|\u{200D}/gu, '')
       .replace(/\s+/g, ' ')
       .trim();
     const s = t.split(/(?<=[.!?])\s+/).find((x) => /kill/i.test(x)) || t;
-    return { k, q: s.length > 110 ? s.slice(0, 107).replace(/\s\S*$/, '') + '…' : s };
+    return s.length > max ? s.slice(0, max - 3).replace(/\s\S*$/, '') + '…' : s;
   };
+  const causeOf = (v) => {
+    const k = [...v.kills].sort((a, b) => b.likes - a.likes)[0];
+    return { k, q: causeLine(k.text) };
+  };
+  const imgCache = new Map();
+  const loadImg = (src) => {
+    if (!src) return Promise.resolve(null);
+    if (!imgCache.has(src))
+      imgCache.set(
+        src,
+        new Promise((ok) => {
+          const i = new Image();
+          i.decoding = 'async';
+          i.onload = () => ok(i);
+          i.onerror = () => ok(null);
+          i.src = src; // same-origin files only (assets/logos/), so the canvas stays exportable
+        }),
+      );
+    return imgCache.get(src);
+  };
+  const MONO_INK = ['#7a2a22', '#28405f', '#2f5a3b', '#6a4b1d', '#4b3a5c', '#5b3030'];
+  const P = {
+    paper: '#f3ecdb',
+    paper2: '#e6dabe',
+    ink: '#1f1a14',
+    mute: '#6b5d47',
+    rule: '#9d8c6d',
+    red: '#b0251c',
+    green: '#2c6b3c',
+    blue: '#1f2f63',
+  };
+  const paper = (x, W, H, seed) => {
+    const R = rng(seed);
+    const g = x.createLinearGradient(0, 0, W, H);
+    g.addColorStop(0, P.paper);
+    g.addColorStop(1, P.paper2);
+    x.fillStyle = g;
+    x.fillRect(0, 0, W, H);
+    for (let i = 0; i < 2600; i++) {
+      x.fillStyle = `rgba(${R() < 0.6 ? '80,60,30' : '255,255,255'},${R() * 0.05})`;
+      x.fillRect(R() * W, R() * H, 1 + R() * 1.6, 1 + R() * 1.6);
+    }
+    return R;
+  };
+  const tracked = (x, ls) => {
+    if ('letterSpacing' in x) x.letterSpacing = ls + 'px';
+  };
+  const txt = (x, t, px, py, font, col = P.ink, align = 'left', ls = 0) => {
+    x.font = font;
+    x.fillStyle = col;
+    x.textAlign = align;
+    tracked(x, ls);
+    x.fillText(t, px, py);
+    tracked(x, 0);
+  };
+  const fitFont = (x, t, w, size, min, fam) => {
+    let fs = size;
+    x.font = `${fam.replace('#', fs)}`;
+    while (x.measureText(t).width > w && fs > min) x.font = fam.replace('#', (fs -= 2));
+    return fs;
+  };
+  const wrapLines = (x, t, w, max = 2) => {
+    const out = [];
+    let line = '';
+    for (const word of String(t).split(' ')) {
+      const tryL = line ? line + ' ' + word : word;
+      if (x.measureText(tryL).width > w && line) {
+        out.push(line);
+        line = word;
+      } else line = tryL;
+    }
+    if (line) out.push(line);
+    if (out.length > max) {
+      out.length = max;
+      out[max - 1] = out[max - 1].replace(/\s?\S*$/, '…');
+    }
+    return out;
+  };
+  const box = (x, bx, by, bw, bh, label, n) => {
+    x.strokeStyle = P.rule;
+    x.lineWidth = 1.2;
+    x.strokeRect(bx, by, bw, bh);
+    txt(x, (n ? n + '. ' : '') + label, bx + 14, by + 26, '600 15px "IBM Plex Mono"', P.mute, 'left', 1.5);
+  };
+  const drawLogo = async (x, name, src, bx, by, sz) => {
+    x.fillStyle = '#fbf7ee';
+    x.fillRect(bx, by, sz, sz);
+    const img = src && typeof src === 'object' ? src : await loadImg(src || logoSrc(name));
+    const pad = 18;
+    if (img) {
+      x.save();
+      x.globalAlpha = 0.97;
+      const iw = img.width || img.naturalWidth,
+        ih = img.height || img.naturalHeight,
+        k = Math.min((sz - pad * 2) / iw, (sz - pad * 2) / ih);
+      x.drawImage(img, bx + (sz - iw * k) / 2, by + (sz - ih * k) / 2, iw * k, ih * k);
+      x.restore();
+    } else {
+      x.fillStyle = MONO_INK[hash32(slug(name)) % 6];
+      x.fillRect(bx + pad, by + pad, sz - pad * 2, sz - pad * 2);
+      txt(
+        x,
+        initials(name),
+        bx + sz / 2,
+        by + sz / 2 + sz * 0.17,
+        `800 ${sz * 0.46}px "Barlow Condensed"`,
+        '#f6efe0',
+        'center',
+        1,
+      );
+    }
+    x.strokeStyle = P.ink;
+    x.lineWidth = 2;
+    x.strokeRect(bx, by, sz, sz);
+  };
+  const stampAt = (x, R, label, col, cx, cy, rot, size = 64) => {
+    x.save();
+    x.translate(cx, cy);
+    x.rotate(rot);
+    x.font = `800 ${size}px "Barlow Condensed"`;
+    tracked(x, 4);
+    const tw = x.measureText(label).width;
+    x.strokeStyle = col;
+    x.fillStyle = col;
+    x.globalAlpha = 0.88;
+    x.lineWidth = 5;
+    x.strokeRect(-tw / 2 - 26, -size * 0.86, tw + 52, size * 1.2);
+    x.lineWidth = 1.6;
+    x.strokeRect(-tw / 2 - 16, -size * 0.74, tw + 32, size * 0.96);
+    x.textAlign = 'center';
+    x.fillText(label, 2, size * 0.08);
+    tracked(x, 0);
+    x.globalCompositeOperation = 'destination-out';
+    for (let i = 0; i < 520; i++) {
+      x.fillStyle = `rgba(0,0,0,${0.25 + R() * 0.6})`;
+      x.beginPath();
+      x.arc((R() - 0.5) * (tw + 60), -size * 0.9 + R() * size * 1.3, R() * 2.2, 0, 7);
+      x.fill();
+    }
+    x.restore();
+  };
+  const frame = (x, W, H, formNo, right) => {
+    x.strokeStyle = P.ink;
+    x.lineWidth = 3;
+    x.strokeRect(40, 40, W - 80, H - 80);
+    x.lineWidth = 1;
+    x.strokeRect(50, 50, W - 100, H - 100);
+    txt(x, 'DEPARTMENT OF LAUNCH HOMICIDE', 84, 100, '600 18px "IBM Plex Mono"', P.ink, 'left', 3);
+    txt(x, formNo, W - 84, 100, '400 18px "IBM Plex Mono"', P.mute, 'right', 2);
+    x.fillStyle = P.ink;
+    x.fillRect(84, 118, W - 168, 2);
+    txt(x, right, W - 84, H - 76, '600 17px "IBM Plex Mono"', P.ink, 'right', 2);
+  };
+  const asOf = () => fdate(D.meta?.generated_at ? D.meta.generated_at + 'T17:00:00Z' : Date.now());
   const drawCert = async (v) => {
     await fontsReady();
     const W = 1500,
@@ -676,298 +1357,199 @@
     c.width = W;
     c.height = H;
     const x = c.getContext('2d');
-    const R = rng(hash32(v.slug));
-    // paper
-    const g = x.createRadialGradient(W / 2, H / 2, 200, W / 2, H / 2, 900);
-    g.addColorStop(0, '#f5ecd7');
-    g.addColorStop(1, '#dcc9a2');
-    x.fillStyle = g;
-    x.fillRect(0, 0, W, H);
-    for (let i = 0; i < 9000; i++) {
-      x.fillStyle = `rgba(${R() < 0.5 ? '90,60,30' : '255,255,255'},${R() * 0.07})`;
-      x.fillRect(R() * W, R() * H, 1 + R() * 2, 1 + R() * 2);
-    }
-    for (let i = 0; i < 5; i++) {
-      const sx = R() * W,
-        sy = R() * H,
-        rr = 40 + R() * 120;
-      const sg = x.createRadialGradient(sx, sy, 0, sx, sy, rr);
-      sg.addColorStop(0, 'rgba(140,100,50,.07)');
-      sg.addColorStop(1, 'rgba(140,100,50,0)');
-      x.fillStyle = sg;
-      x.fillRect(sx - rr, sy - rr, rr * 2, rr * 2);
-    }
-    // border + guilloche band
-    const INK = '#2a1d14',
-      RED = '#b3121c',
-      MUTE = '#7b6248';
-    x.strokeStyle = INK;
-    x.lineWidth = 4;
-    x.strokeRect(34, 34, W - 68, H - 68);
-    x.lineWidth = 1.2;
-    x.strokeRect(46, 46, W - 92, H - 92);
-    x.strokeRect(78, 78, W - 156, H - 156);
-    x.save();
-    x.beginPath();
-    x.rect(46, 46, W - 92, H - 92);
-    x.rect(78, 78, W - 156, H - 156);
-    x.clip('evenodd');
-    x.strokeStyle = 'rgba(122,30,30,.55)';
-    x.lineWidth = 0.9;
-    for (const ph of [0, Math.PI / 2, Math.PI, Math.PI * 1.5]) {
-      x.beginPath();
-      for (let t = 0; t <= 1; t += 0.0006) {
-        const per = 2 * (W - 124) + 2 * (H - 124),
-          d = t * per;
-        let px,
-          py,
-          nx = 0,
-          ny = 0;
-        if (d < W - 124) {
-          px = 62 + d;
-          py = 62;
-          ny = 1;
-        } else if (d < W - 124 + H - 124) {
-          px = W - 62;
-          py = 62 + d - (W - 124);
-          nx = 1;
-        } else if (d < 2 * (W - 124) + H - 124) {
-          px = W - 62 - (d - (W - 124) - (H - 124));
-          py = H - 62;
-          ny = 1;
-        } else {
-          px = 62;
-          py = H - 62 - (d - 2 * (W - 124) - (H - 124));
-          nx = 1;
-        }
-        const o = Math.sin(d / 9 + ph) * 12;
-        px += nx * o;
-        py += ny * o;
-        t ? x.lineTo(px, py) : x.moveTo(px, py);
-      }
-      x.stroke();
-    }
-    x.restore();
-    const ctr = (t, y, f, col = INK, ls = 0) => {
-      x.font = f;
-      x.fillStyle = col;
-      x.textAlign = 'center';
-      if ('letterSpacing' in x) x.letterSpacing = ls + 'px';
-      x.fillText(t, W / 2, y);
-      if ('letterSpacing' in x) x.letterSpacing = '0px';
-    };
-    ctr('DEPARTMENT OF LAUNCH HOMICIDE  ·  ' + SITE.toUpperCase(), 140, '400 21px "Special Elite"', MUTE, 4);
-    ctr('Certificate of Death', 228, 'italic 900 86px "Playfair Display"', INK);
-    ctr(
-      'This certifies that the product named below has been publicly pronounced dead on X',
-      276,
-      '400 21px "Special Elite"',
-      MUTE,
-    );
-    // name
-    let fs = 116;
-    const nm = v.name.toUpperCase();
-    x.font = `400 ${fs}px Anton`;
-    while (x.measureText(nm).width > 1120 && fs > 50) {
-      fs -= 4;
-      x.font = `400 ${fs}px Anton`;
-    }
-    ctr(nm, 300 + fs * 0.92, `400 ${fs}px Anton`, INK, 2);
-    const ny = 300 + fs * 0.92 + 22;
-    x.strokeStyle = INK;
-    x.lineWidth = 1.5;
-    x.beginPath();
-    x.moveTo(330, ny);
-    x.lineTo(W - 330, ny);
-    x.stroke();
-    // fields
+    const R = paper(x, W, H, hash32(v.slug));
     const n = v.kills.length,
-      ks = [...new Set(v.kills.map((k) => '@' + k.handle))],
+      certNo = `WJK-${v.first.case}-${String(n).padStart(2, '0')}`;
+    frame(x, W, H, `FORM DLH-7 · CERT. Nº ${certNo}`, SITE.toUpperCase());
+    txt(x, 'Certificate of Death', 84, 196, '600 64px "Source Serif 4"', P.ink);
+    txt(
+      x,
+      'This certifies that the product named below was publicly pronounced dead on X.',
+      86,
+      236,
+      'italic 400 25px "Source Serif 4"',
+      P.mute,
+    );
+    // ID block: logo + name
+    await drawLogo(x, v.name, null, 84, 272, 196);
+    box(x, 300, 272, W - 384, 196, 'NAME OF DECEASED', 1);
+    const nm = v.name.toUpperCase();
+    // leave room on the right of the name box for the status stamp
+    const fs = fitFont(x, nm, W - 920, 132, 44, '800 #px "Barlow Condensed"');
+    txt(x, nm, 326, 272 + 98 + fs * 0.36, `800 ${fs}px "Barlow Condensed"`, P.ink, 'left', 1);
+    // fields
+    const ks = [...new Set(v.kills.map((k) => k.handle.toLowerCase()))].map((h) => A[h]),
       { q: cq } = causeOf(v);
-    const wrap = (t, w) => {
-      const out = [];
-      let line = '';
-      for (const word of t.split(' ')) {
-        const tryL = line ? line + ' ' + word : word;
-        if (x.measureText(tryL).width > w && line) {
-          out.push(line);
-          line = word;
-        } else line = tryL;
-      }
-      if (line) out.push(line);
-      if (out.length > 2) {
-        out.length = 2;
-        out[1] = out[1].replace(/\s?\S*$/, '…');
-      }
-      return out;
-    };
-    const field = (lx, y, label, val, w, vf = '700 31px "Playfair Display"') => {
-      x.textAlign = 'left';
-      x.font = '400 17px "Special Elite"';
-      x.fillStyle = MUTE;
-      if ('letterSpacing' in x) x.letterSpacing = '3px';
-      x.fillText(label, lx, y);
-      if ('letterSpacing' in x) x.letterSpacing = '0px';
-      x.font = vf;
-      x.fillStyle = INK;
-      wrap(val, w).forEach((l, i) => x.fillText(l, lx, y + 38 + i * 34));
-    };
-    const top = ny + 54,
-      L = 150,
-      M = 790,
-      G = 96,
-      wit = `${fmt(v.likes)} likes${v.views ? ' · ' + fmt(v.views) + ' views' : ''}`;
-    field(L, top, 'TIMES PRONOUNCED DEAD', n === 1 ? 'Once' : `${n} times`, 560, '700 34px "Playfair Display"');
-    field(
-      M,
-      top,
-      'FIRST REPORTED DEATH',
-      `${fdate(v.first.created_at)} · @${v.first.handle}`,
-      560,
-      '700 28px "Playfair Display"',
+    const top = 492,
+      bh = 112,
+      L = 84,
+      CW = (W - 168 - 24) / 2,
+      M = L + CW + 24;
+    box(x, L, top, CW, bh, 'TIMES PRONOUNCED DEAD', 2);
+    txt(x, n === 1 ? 'Once' : `${n} times`, L + 14, top + 84, '600 44px "IBM Plex Mono"');
+    box(x, M, top, CW, bh, 'FIRST REPORTED DEATH', 3);
+    txt(x, `${fdate(v.first.created_at)} · @${v.first.handle}`, M + 14, top + 80, '400 30px "IBM Plex Mono"');
+    box(x, L, top + bh + 16, W - 168, bh, 'CAUSE OF DEATH (AS STATED BY THE SUSPECT)', 4);
+    x.font = 'italic 400 30px "Source Serif 4"';
+    wrapLines(x, `“${cq}”`, W - 210, 2).forEach((l, i) =>
+      txt(x, l, L + 14, top + bh + 16 + 64 + i * 34, 'italic 400 30px "Source Serif 4"'),
     );
-    field(L, top + G, 'CAUSE OF DEATH', `“${cq}”`, 580, 'italic 900 24px "Playfair Display"');
-    field(
-      M,
-      top + G,
-      n > 1 ? 'MOST RECENT DEATH' : 'WITNESSES AT THE SCENE',
-      n > 1 ? `${fdate(v.last.created_at)} · @${v.last.handle}` : wit,
-      560,
-      '700 28px "Playfair Display"',
-    );
-    field(
-      L,
-      top + 2 * G,
-      ks.length > 1 ? `KNOWN KILLERS (${ks.length})` : 'KNOWN KILLER',
-      ks.slice(0, 4).join(', ') + (ks.length > 4 ? ` +${ks.length - 4} more` : ''),
-      580,
-      '700 25px "Playfair Display"',
-    );
-    if (n > 1) field(M, top + 2 * G, 'WITNESSES AT THE SCENES', wit, 560, '700 28px "Playfair Display"');
-    // seal
-    const sx = 196,
-      sy = 838;
-    x.save();
-    x.translate(sx, sy);
-    x.strokeStyle = RED;
-    x.fillStyle = RED;
-    x.globalAlpha = 0.85;
-    x.lineWidth = 3;
-    x.beginPath();
-    x.arc(0, 0, 62, 0, 7);
-    x.stroke();
-    x.lineWidth = 1.2;
-    x.beginPath();
-    x.arc(0, 0, 55, 0, 7);
-    x.stroke();
-    x.beginPath();
-    x.arc(0, 0, 33, 0, 7);
-    x.stroke();
-    x.font = '400 11px "Special Elite"';
-    const st = '· OFFICIAL · WE JUST KILLED · NO PRODUCTS HARMED ';
-    for (let i = 0; i < st.length; i++) {
+    const ky = top + 2 * (bh + 16);
+    box(x, L, ky, CW, bh + 20, ks.length > 1 ? `KNOWN KILLERS (${ks.length})` : 'KNOWN KILLER', 5);
+    const shown = ks.slice(0, 6);
+    for (let i = 0; i < shown.length; i++) {
+      const a = shown[i],
+        ax = L + 16 + i * 66,
+        ay = ky + 40;
+      const im = await loadImg(has(LOGO.killers, a.key) ? LOGO.killers[a.key] : null);
       x.save();
-      x.rotate((i / st.length) * Math.PI * 2);
-      x.fillText(st[i], -3, -40);
-      x.restore();
-    }
-    x.font = '400 25px Anton';
-    x.textAlign = 'center';
-    x.fillText('RIP', 0, 9);
-    x.restore();
-    // signature
-    const asOf = fdate(D.meta?.generated_at ? D.meta.generated_at + 'T17:00:00Z' : Date.now()).toUpperCase();
-    x.textAlign = 'center';
-    x.font = '400 34px "Permanent Marker"';
-    x.fillStyle = '#1f2d6b';
-    x.save();
-    x.translate(W - 300, 838);
-    x.rotate(-0.04);
-    x.fillText('the coroner', 0, 0);
-    x.restore();
-    x.strokeStyle = INK;
-    x.lineWidth = 1.2;
-    x.beginPath();
-    x.moveTo(W - 510, 858);
-    x.lineTo(W - 110, 858);
-    x.stroke();
-    x.font = '400 14px "Special Elite"';
-    x.fillStyle = MUTE;
-    x.fillText('ATTENDING CORONER · ' + SITE.toUpperCase() + ' · ' + asOf, W - 310, 882);
-    // status stamp
-    x.save();
-    x.translate(W / 2 - 20, 840);
-    x.rotate(-0.1);
-    const label = v.brand ? 'STILL ALIVE' : 'PROBABLY FINE';
-    x.font = '400 70px Anton';
-    const tw = x.measureText(label).width;
-    x.strokeStyle = v.brand ? '#1d8a4c' : RED;
-    x.fillStyle = x.strokeStyle;
-    x.lineWidth = 6;
-    x.strokeRect(-tw / 2 - 24, -62, tw + 48, 84);
-    x.lineWidth = 2;
-    x.strokeRect(-tw / 2 - 14, -52, tw + 28, 64);
-    x.textAlign = 'center';
-    x.fillText(label, 0, 2);
-    x.globalCompositeOperation = 'destination-out';
-    for (let i = 0; i < 700; i++) {
-      x.fillStyle = `rgba(0,0,0,${0.3 + R() * 0.6})`;
       x.beginPath();
-      x.arc((R() - 0.5) * (tw + 60), -64 + R() * 90, R() * 2.2, 0, 7);
-      x.fill();
+      x.rect(ax, ay, 56, 56);
+      x.clip();
+      if (im) x.drawImage(im, ax, ay, 56, 56);
+      else {
+        x.fillStyle = MONO_INK[hash32(a.key) % 6];
+        x.fillRect(ax, ay, 56, 56);
+        txt(x, initials(a.name), ax + 28, ay + 38, '800 28px "Barlow Condensed"', '#f6efe0', 'center');
+      }
+      x.restore();
+      x.strokeStyle = P.ink;
+      x.lineWidth = 1.5;
+      x.strokeRect(ax, ay, 56, 56);
     }
-    x.restore();
-    // footer line
-    x.textAlign = 'center';
-    x.font = '400 15px "Special Elite"';
-    x.fillStyle = MUTE;
-    x.fillText(
-      `CERT. Nº WJK-${v.first.case}-${String(n).padStart(2, '0')}   ·   A LOVING PARODY · EVERY CASE LINKS TO THE ORIGINAL POST · ${SITE.toUpperCase()}/#/VICTIM/${v.slug.toUpperCase()}`,
-      W / 2,
-      912,
+    txt(
+      x,
+      shown.length === 1 ? '@' + shown[0].handle : ks.length > 6 ? `+${ks.length - 6} more` : '',
+      L + 16 + Math.min(shown.length, 6) * 66 + 8,
+      ky + 78,
+      '400 22px "IBM Plex Mono"',
+      P.mute,
     );
+    box(x, M, ky, CW, bh + 20, 'WITNESSES AT THE SCENE', 6);
+    txt(
+      x,
+      `${fmt(v.likes)} likes${v.views ? ' · ' + fmt(v.views) + ' views' : ''}`,
+      M + 14,
+      ky + 84,
+      '400 30px "IBM Plex Mono"',
+    );
+    // signature + stamp
+    txt(x, `Filed ${asOf()} by the attending coroner`, 84, H - 76, '400 17px "IBM Plex Mono"', P.mute, 'left', 1);
+    stampAt(x, R, v.brand ? 'STILL ALIVE' : 'PROBABLY FINE', v.brand ? P.green : P.red, W - 300, 362, -0.1, 66);
     return c;
   };
-  const certBlob = async (v) => {
-    const c = await drawCert(v);
-    return new Promise((r) => c.toBlob(r, 'image/png'));
+  const drawSafe = async (name, img = null) => {
+    await fontsReady();
+    const W = 1500,
+      H = 1000,
+      c = document.createElement('canvas');
+    c.width = W;
+    c.height = H;
+    const x = c.getContext('2d');
+    const R = paper(x, W, H, hash32(slug(name) + 'safe'));
+    const caseNo = `WJK-S${String(hash32(norm(name)) % 100000).padStart(5, '0')}`;
+    frame(x, W, H, `FORM DLH-0 · CASE Nº ${caseNo}`, SITE.toUpperCase());
+    txt(x, 'Certificate of Survival', 84, 196, '600 64px "Source Serif 4"', P.ink);
+    txt(
+      x,
+      'This certifies that no launch post on file claims to have killed the product below.',
+      86,
+      236,
+      'italic 400 25px "Source Serif 4"',
+      P.mute,
+    );
+    await drawLogo(x, name, img, 84, 272, 196);
+    box(x, 300, 272, W - 384, 196, 'NAME OF PRODUCT', 1);
+    const nm = name.toUpperCase();
+    const fs = fitFont(x, nm, W - 430, 132, 54, '800 #px "Barlow Condensed"');
+    txt(x, nm, 326, 272 + 98 + fs * 0.36, `800 ${fs}px "Barlow Condensed"`, P.ink, 'left', 1);
+    const top = 492,
+      bh = 112,
+      L = 84,
+      CW = (W - 168 - 24) / 2,
+      M = L + CW + 24;
+    box(x, L, top, CW, bh, 'KILL CLAIMS ON FILE', 2);
+    txt(x, 'None', L + 14, top + 84, '600 44px "IBM Plex Mono"');
+    box(x, M, top, CW, bh, 'DATE OF CHECK', 3);
+    txt(x, fdate(Date.now()), M + 14, top + 80, '400 30px "IBM Plex Mono"');
+    box(x, L, top + bh + 16, W - 168, bh * 2 + 36, "CORONER'S NOTE", 4);
+    x.font = 'italic 400 40px "Source Serif 4"';
+    wrapLines(x, `Marked safe from being “just killed” today. ${name} is still alive (for now).`, W - 640, 3).forEach(
+      (l, i) => txt(x, l, L + 18, top + bh + 16 + 86 + i * 50, 'italic 400 40px "Source Serif 4"'),
+    );
+    txt(
+      x,
+      `Checked against ${plural(K.length, 'kill claim')} · ${asOf()} snapshot`,
+      84,
+      H - 76,
+      '400 17px "IBM Plex Mono"',
+      P.mute,
+      'left',
+      1,
+    );
+    stampAt(x, R, 'MARKED SAFE', P.green, W - 300, 790, -0.1, 76);
+    return c;
   };
-  const certCache = {};
+  const toBlob = (c) => new Promise((r) => c.toBlob(r, 'image/png'));
+  // keyed by victim slug, which can be any string ("constructor" included): no prototype
+  const certBlobs = Object.create(null),
+    certCache = Object.create(null);
+  const certBlob = (v) => (certBlobs[v.slug] ||= drawCert(v).then(toBlob));
   const certURL = async (v) => (certCache[v.slug] ||= URL.createObjectURL(await certBlob(v)));
-  const downloadCert = async (v) => {
-    const u = await certURL(v);
-    const a = document.createElement('a');
+  let safeLogo = null,
+    safeCur = null;
+  const safeBlob = (name) => {
+    if (!safeCur || safeCur.name !== name || safeCur.logo !== safeLogo)
+      safeCur = { name, logo: safeLogo, blob: drawSafe(name, safeLogo).then(toBlob) };
+    return safeCur.blob;
+  };
+  const saveBlob = (blob, file) => {
+    const u = URL.createObjectURL(blob),
+      a = document.createElement('a');
     a.href = u;
-    a.download = `death-certificate-${v.slug}.png`;
+    a.download = file;
     document.body.appendChild(a);
     a.click();
     a.remove();
-    Sound.thud();
-    toast('Certificate issued 📜');
+    setTimeout(() => URL.revokeObjectURL(u), 4000);
   };
-  const certShareText = (v) =>
-    v.brand
-      ? `${v.name} has been killed ${times(v.kills.length)} and is somehow still alive. Here is the death certificate 📜🔪`
-      : `“${v.name}” has been killed ${times(v.kills.length)}. Death certificate attached 📜🔪`;
+  const downloadCert = async (v) => {
+    saveBlob(await certBlob(v), `death-certificate-${v.slug}.png`);
+    Sound.play('shutter');
+    toast('Certificate issued. Frame it.');
+  };
+  const fillSlot = async (slot, blob, alt) => {
+    if (!slot || !blob) return;
+    const img = document.createElement('img');
+    const u = URL.createObjectURL(blob);
+    img.src = u;
+    img.alt = alt;
+    img.width = 1500;
+    img.height = 1000;
+    img.onload = () => slot.dataset.keep || setTimeout(() => URL.revokeObjectURL(u), 1000);
+    slot.replaceChildren(img);
+  };
 
   /* ---------------- modal ---------------- */
   let modalOpen = false,
     lastFocus = null;
-  const openModal = (html) => {
-    lastFocus = document.activeElement;
+  const openModal = (html, cls = '') => {
+    lastFocus = modalOpen ? lastFocus : document.activeElement;
     setHTML($('#modal-body'), html);
+    $('#modal-in').className = 'modal-in' + (cls ? ' ' + cls : '');
     $('#modal').hidden = false;
     modalOpen = true;
-    document.body.style.overflow = 'hidden';
+    document.body.classList.add('modal-on');
     setTimeout(() => $('.modal-x').focus({ preventScroll: true }), 30);
   };
   const hideModal = () => {
     $('#modal').hidden = true;
     modalOpen = false;
-    document.body.style.overflow = '';
+    document.body.classList.remove('modal-on');
     lastFocus?.focus?.({ preventScroll: true });
   };
   const closeModal = () => {
+    Sound.play('folder');
     if (isModalRoute(location.hash)) {
       if (inAppNav) history.back();
       else {
@@ -977,46 +1559,61 @@
       }
     } else hideModal();
   };
-  const isModalRoute = (h) => /^#\/(case|cert|verdict)\//.test(h);
+  const isModalRoute = (h) => /^#\/(case|cert|verdict|check)\//.test(h);
   $('#modal').addEventListener('click', (e) => {
     if (e.target.closest('[data-close]')) closeModal();
   });
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && modalOpen) closeModal();
+    if (e.key !== 'Escape') return;
+    const open = $('details.share[open]');
+    if (open) {
+      open.open = false;
+      open.querySelector('summary').focus();
+    } else if (modalOpen) closeModal();
   });
 
   const openCase = (id) => {
     const k = K.find((k) => k.id === id);
     if (!k) return false;
     openModal(
-      `<div class="m-case">${card(k, '', true)}<div class="m-acts">${k.victims.map((v) => `<a class="btn" href="#/cert/${slug(v)}">📜 ${esc(v)}’s death certificate</a>`).join('')}<a class="btn" href="#/killer/${esc(k.handle.toLowerCase())}">All kills by @${esc(k.handle)}</a><button class="btn" data-random>🎲 Another one</button></div></div>`,
+      `<div class="m-case">${card(k, '', true)}<div class="m-acts">${k.victims.map((v) => `<a class="btn" href="#/cert/${slug(v)}">${esc(v)}: death certificate</a>`).join('')}${shareMenu(SHARE.case(k), '#/case/' + k.id)}<a class="btn" href="#/killer/${esc(k.handle.toLowerCase())}">All kills by @${esc(k.handle)}</a><button class="btn" type="button" data-random>Another case</button></div></div>`,
+      'mi-case',
     );
     $('#modal-body .card').id = 'modal-title';
     document.title = `Case Nº ${k.case}: ${k.victims.join(', ')} — We Just Killed`;
+    Sound.play('open');
     return true;
   };
   const openCert = async (s) => {
+    if (!has(V, s)) return false;
     const v = V[s];
-    if (!v) return false;
     openModal(
-      `<div class="m-cert"><h2 id="modal-title">Death certificate · ${esc(v.name)}</h2><div class="cert-slot"></div><div class="m-acts"><button class="btn btn-red" data-dl="${v.slug}">⬇ Download PNG</button><button class="btn" data-copy="#/cert/${v.slug}">🔗 Copy link</button><a class="btn" target="_blank" rel="noopener noreferrer" href="${intent(certShareText(v), pageURL('#/cert/' + v.slug))}">Post on X</a><a class="btn" href="#/victim/${v.slug}">Case files (${v.kills.length})</a></div></div>`,
+      `<div class="m-cert"><p class="eyebrow">Form DLH-7 · Certificate of death</p><h2 id="modal-title">${esc(v.name)}</h2><div class="cert-slot"><span class="cert-wait">Typing up the certificate…</span></div><div class="m-acts"><button class="btn btn-stamp" type="button" data-dl="${v.slug}">Download PNG</button>${shareMenu(SHARE.cert(v), '#/cert/' + v.slug, () => certBlob(v))}<a class="btn" href="#/victim/${v.slug}">Case files (${v.kills.length})</a></div></div>`,
+      'mi-cert',
     );
     document.title = `Death certificate: ${v.name} — We Just Killed`;
-    const u = await certURL(v);
+    const blob = await certBlob(v);
     const slot = $('.cert-slot');
     if (slot) {
-      const img = document.createElement('img');
-      img.src = u;
-      img.alt = `Death certificate for ${v.name}: killed ${times(v.kills.length)}, status ${v.brand ? 'still alive' : 'probably fine'}.`;
-      slot.replaceWith(img);
-      Sound.thud();
+      await fillSlot(
+        slot,
+        blob,
+        `Death certificate for ${v.name}: killed ${times(v.kills.length)}, status ${v.brand ? 'still alive' : 'probably fine'}.`,
+      );
+      Sound.play('stamp');
     }
     return true;
   };
-  const openVerdict = (q) => {
-    openModal(verdictHTML(q));
-    Sound.thud();
-    document.title = `Is ${q} dead? — We Just Killed`;
+  const openCheck = async (q) => {
+    const name = cleanName(q);
+    safeLogo = null;
+    openModal(checkHTML(name), 'mi-result');
+    document.title = `Is ${name} dead? — We Just Killed`;
+    Sound.play('stamp');
+    const slot = $('#modal-body .r-slot');
+    const { primary: v } = lookup(name);
+    if (v) fillSlot(slot, await certBlob(v), `Death certificate for ${v.name}`);
+    else if (slot) fillSlot(slot, await safeBlob(name || 'Your product'), `Marked safe card for ${name}`);
     return true;
   };
 
@@ -1114,7 +1711,7 @@
       'Most viral kill',
       `<a href="#/case/${F.viral.id}">@${esc(F.viral.handle)}</a> killed ${esc(F.viral.victims.join(', '))} for ${fmt(F.viral.likes)} likes.`,
     ]);
-    return `<div class="notes">${N.map(([n, t, b], i) => `<div class="note" data-sty="--r:${[-1.2, 0.8, -0.5, 1.1, -0.9, 0.6][i % 6]}deg"><h3>${n ? `<span class="n">${n}</span>` : ''}${t}</h3><p>${b}</p></div>`).join('')}</div>`;
+    return `<div class="notes">${N.map(([n, t, b]) => `<div class="note"><h3>${n ? `<span class="n">${n}</span>` : ''}${t}</h3><p>${b}</p></div>`).join('')}</div>`;
   };
 
   /* ---------------- morgue ---------------- */
@@ -1138,13 +1735,11 @@
   ];
   const shortD = (s) => fdate(s, { month: 'short', year: '2-digit', timeZone: TZ }).replace(' ', ' ’');
   const tombHTML = (v, i) => {
-    const n = v.kills.length,
-      sh = ['', 's2', 's3'][hash32(v.slug) % 3];
-    const ds =
-      n > 1 ? `† ${shortD(v.first.created_at)} — † ${shortD(v.last.created_at)}` : `† ${fdate(v.first.created_at)}`;
-    return `<a class="tomb ${i === 0 ? 'top1' : sh} rv" href="#/cert/${v.slug}" data-sty="transition-delay:${(i % 6) * 60}ms" aria-label="${esc(v.name)}, killed ${times(n)}. Open death certificate.">
-    <span class="ghost${v.brand ? '' : ' q'}">${v.brand ? '👻 still alive' : 'still around?'}</span>
-    <div class="stone"><div class="rip">R · I · P</div>${i === 0 ? '<span class="crown">the most murdered product on the internet</span>' : ''}<h3>${esc(v.name)}</h3><div class="tomb-ct">killed <b>${n}</b>${n === 1 ? ' time' : ' times'}</div><div class="tomb-d">${ds}</div><p class="ep">${esc(EPI[hash32(v.slug + 'e') % EPI.length])}</p></div><div class="dirt"></div></a>`;
+    const n = v.kills.length;
+    const ds = n > 1 ? `${shortD(v.first.created_at)} – ${shortD(v.last.created_at)}` : fdate(v.first.created_at);
+    return `<a class="tomb${i === 0 ? ' top1' : ''} rv" href="#/cert/${v.slug}" data-sty="transition-delay:${(i % 6) * 50}ms" aria-label="${esc(v.name)}, killed ${times(n)}. Open death certificate.">
+    <span class="t-no">Drawer ${String(i + 1).padStart(2, '0')}</span><span class="t-st${v.brand ? '' : ' unk'}">${v.brand ? 'Still alive' : 'Status unknown'}</span>
+    <span class="t-tag">${logo(v.name, 'lg lg-m')}<span><b class="t-n">${esc(v.name)}</b><span class="t-ct">Killed <b>${n}</b>${n === 1 ? ' time' : ' times'} · ${ds}</span></span></span>${i === 0 ? '<span class="crown">The most murdered product on the internet</span>' : ''}<span class="ep">${esc(EPI[hash32(v.slug + 'e') % EPI.length])}</span><span class="t-h" aria-hidden="true"></span></a>`;
   };
   const morgueList = (lim) => {
     const multi = victims.filter((v) => v.kills.length > 1),
@@ -1156,7 +1751,7 @@
   const posterHTML = (a, i) => {
     const vs = [...new Set(a.kills.flatMap((k) => k.victims))];
     const r = [-2.2, 1.4, -0.8, 2, -1.5, 0.9][i % 6];
-    return `<a class="poster rv" href="#/killer/${esc(a.key)}" data-sty="--r:${r}deg;transition-delay:${(i % 4) * 70}ms"><div class="p-w">WANTED</div><div class="p-for">for <b>${a.kills.length}</b> counts of<br>launch homicide</div><div class="p-ph">${avatar(a, 'av', '200x200')}</div><div class="p-n">${esc(a.name)}</div><div class="p-h">@${esc(a.handle)}</div><p class="p-v">Known victims: ${esc(vs.slice(0, 5).join(', '))}${vs.length > 5 ? ` +${vs.length - 5} more` : ''}</p><div class="p-r"><small>BOUNTY COLLECTED</small>${fmt(a.likes)} LIKES</div><div class="p-l">Last seen ${fdate(a.kills.at(-1).created_at)}</div></a>`;
+    return `<a class="poster rv" href="#/killer/${esc(a.key)}" data-sty="--r:${r}deg;transition-delay:${(i % 4) * 60}ms"><div class="p-w">WANTED</div><div class="p-for">for <b>${a.kills.length}</b> counts of<br>launch homicide</div><div class="p-ph">${avatar(a, 'av', '200x200')}</div><div class="p-n">${esc(a.name)}</div><div class="p-h">@${esc(a.handle)}</div><p class="p-v">Known victims: ${esc(vs.slice(0, 5).join(', '))}${vs.length > 5 ? ` +${vs.length - 5} more` : ''}</p><div class="p-r"><small>Bounty collected</small>${fmt(a.likes)} likes</div><div class="p-l">Last seen ${fdate(a.kills.at(-1).created_at)}</div></a>`;
   };
   const wantedList = () => killers.filter((a) => a.kills.length > 1);
 
@@ -1219,8 +1814,8 @@
       const n = v.kills.length;
       setHTML(
         el,
-        `<div><p class="eyebrow">Victim #${v.rank} of ${victims.length}</p><h2>${esc(v.name)}</h2><p><span class="status${v.brand ? '' : ' q'}"><i></i>${v.brand ? 'still alive' : 'status unconfirmed'}</span></p><p>Pronounced dead <b class="big-n">${times(n)}</b> by ${plural(v.killers.size, 'suspect')}, first on ${fdate(v.first.created_at)}. ${fmt(v.likes)} likes at the scene${n > 1 ? 's' : ''}.</p>
-      <div class="acts"><button class="btn btn-red" data-dl="${v.slug}">⬇ Download death certificate</button><a class="btn" target="_blank" rel="noopener noreferrer" href="${intent(certShareText(v), pageURL('#/cert/' + v.slug))}">Post on X</a><button class="btn" data-copy="#/victim/${v.slug}">🔗 Copy link</button><a class="btn" href="#/cases">✕ All cases</a></div></div>
+        `<div><p class="eyebrow">Victim #${v.rank} of ${victims.length}</p><h2>${esc(v.name)}</h2><p><span class="status${v.brand ? '' : ' unk'}"><i></i>${v.brand ? 'still alive' : 'status unconfirmed'}</span></p><p>Pronounced dead <b class="big-n">${times(n)}</b> by ${plural(v.killers.size, 'suspect')}, first on ${fdate(v.first.created_at)}. ${fmt(v.likes)} likes at the scene${n > 1 ? 's' : ''}.</p>
+      <div class="acts"><button class="btn btn-stamp" type="button" data-dl="${v.slug}">Download death certificate</button>${shareMenu(SHARE.killed(v), '#/check/' + v.slug, () => certBlob(v))}<a class="btn" href="#/cases">All cases</a></div></div>
       <a class="cert-thumb" href="#/cert/${v.slug}" aria-label="Open death certificate"></a>`,
       );
       const u = await certURL(v);
@@ -1242,14 +1837,14 @@
       setHTML(
         el,
         `<div><p class="eyebrow">Suspect file</p><div class="u-sus">${avatar(a, 'av', '200x200')}<div><h2 class="u-m0">${esc(a.name)}</h2><p class="u-m0">@${esc(a.handle)}</p></div></div><p class="u-mt16">${plural(a.kills.length, 'kill claim')} on file. Victims: ${vs.map((v) => `<a href="#/victim/${slug(v)}" class="u-chalk">${esc(v)}</a>`).join(', ')}. Bounty collected: ${fmt(a.likes)} likes.</p>
-      <div class="acts"><a class="btn" href="https://x.com/${encodeURIComponent(a.handle)}" target="_blank" rel="noopener noreferrer">Profile on X ↗</a><button class="btn" data-copy="#/killer/${esc(a.key)}">🔗 Copy link</button><a class="btn" href="#/cases">✕ All cases</a></div></div><div></div>`,
+      <div class="acts"><a class="btn" href="https://x.com/${encodeURIComponent(a.handle)}" target="_blank" rel="noopener noreferrer">Profile on X ↗</a>${shareMenu(SHARE.killer(a), '#/killer/' + a.key)}<a class="btn" href="#/cases">All cases</a></div></div><div></div>`,
       );
       document.title = `Suspect @${a.handle} — We Just Killed`;
     } else if (filter.type === 'month') {
       const n = K.filter((k) => k.created_at.startsWith(filter.v)).length;
       setHTML(
         el,
-        `<div><p class="eyebrow">Month in review</p><h2>${esc(mlabel(filter.v))}</h2><p>${plural(n, 'kill claim')} that month.</p><div class="acts"><a class="btn" href="#/timeline">← Outbreak report</a><a class="btn" href="#/cases">✕ All cases</a></div></div><div></div>`,
+        `<div><p class="eyebrow">Month in review</p><h2>${esc(mlabel(filter.v))}</h2><p>${plural(n, 'kill claim')} that month.</p><div class="acts"><a class="btn" href="#/timeline">Outbreak report</a><a class="btn" href="#/cases">All cases</a></div></div><div></div>`,
       );
     }
   };
@@ -1451,7 +2046,7 @@
       const v = n.v;
       setHTML(
         p,
-        `<button class="x" data-unfocus aria-label="Close">✕</button><p class="eyebrow u-pmute">Victim #${v.rank}</p><h3>${esc(v.name)}</h3><p>Killed ${times(v.kills.length)} by ${plural(v.killers.size, 'suspect')}. Status: ${v.brand ? '<b class="u-alive">still alive</b>' : 'unconfirmed'}.</p><ul>${v.kills
+        `<button class="x" type="button" data-unfocus aria-label="Close">×</button><p class="eyebrow u-pmute">Victim #${v.rank}</p><h3>${esc(v.name)}</h3><p>Killed ${times(v.kills.length)} by ${plural(v.killers.size, 'suspect')}. Status: ${v.brand ? '<b class="u-alive">still alive</b>' : 'unconfirmed'}.</p><ul>${v.kills
           .slice()
           .reverse()
           .slice(0, 8)
@@ -1461,13 +2056,13 @@
           )
           .join(
             '',
-          )}</ul><div class="acts"><a class="btn btn-sm" href="#/cert/${v.slug}">📜 Certificate</a><a class="btn btn-sm" href="#/victim/${v.slug}">Case files</a></div>`,
+          )}</ul><div class="acts"><a class="btn btn-sm" href="#/cert/${v.slug}">Certificate</a><a class="btn btn-sm" href="#/victim/${v.slug}">Case files</a></div>`,
       );
     } else {
       const a = n.a;
       setHTML(
         p,
-        `<button class="x" data-unfocus aria-label="Close">✕</button><p class="eyebrow u-pmute">Suspect</p><h3>@${esc(a.handle)}</h3><p>${esc(a.name)} · ${plural(a.kills.length, 'kill claim')} · ${fmt(a.likes)} likes collected.</p><ul>${a.kills
+        `<button class="x" type="button" data-unfocus aria-label="Close">×</button><p class="eyebrow u-pmute">Suspect</p><h3>@${esc(a.handle)}</h3><p>${esc(a.name)} · ${plural(a.kills.length, 'kill claim')} · ${fmt(a.likes)} likes collected.</p><ul>${a.kills
           .slice()
           .reverse()
           .slice(0, 8)
@@ -1475,7 +2070,7 @@
           .join('')}</ul><div class="acts"><a class="btn btn-sm" href="#/killer/${esc(a.key)}">Suspect file</a></div>`,
       );
     }
-    Sound.tick();
+    Sound.play('paper');
   };
   const unfocus = () => {
     $('#board').classList.remove('focus');
@@ -1672,7 +2267,8 @@
         underlying = a === 'case' ? '#/cases' : a === 'cert' && V[b] ? '#/victim/' + b : '#/';
         routeView(underlying);
       }
-      const ok = a === 'case' ? openCase(b) : a === 'cert' ? openCert(b) : openVerdict(V[b] ? V[b].name : b);
+      if (a === 'verdict') history.replaceState(null, '', '#/check/' + rest.join('/'));
+      const ok = a === 'case' ? openCase(b) : a === 'cert' ? openCert(b) : openCheck(has(V, b) ? V[b].name : b);
       if (ok === false) {
         history.replaceState(null, '', underlying);
         hideModal();
@@ -1734,11 +2330,50 @@
         renderWall();
       }, 140);
     });
+    // a share menu opening: render its card in advance so native share keeps the user gesture
+    document.addEventListener(
+      'toggle',
+      (e) => {
+        const d = e.target;
+        if (!d.matches?.('details.share') || !d.open) return;
+        Sound.play('paper');
+        shares.get(d.dataset.shareId)?.card?.();
+      },
+      true,
+    );
+    // optional local logo for the "marked safe" card: decoded in the browser, never uploaded
+    document.addEventListener('change', async (e) => {
+      if (e.target.id !== 'logo-file') return;
+      const f = e.target.files?.[0];
+      if (!f) return;
+      if (!/^image\/(png|jpeg|webp|gif)$/.test(f.type) || f.size > 5e6) {
+        toast('That file will not fit in the evidence bag. PNG, JPG or WebP under 5 MB.');
+        return;
+      }
+      try {
+        safeLogo = await createImageBitmap(f);
+      } catch {
+        toast('Could not read that image.');
+        return;
+      }
+      const name = $('#modal-title')?.textContent || 'Your product';
+      const u = URL.createObjectURL(f),
+        im = document.createElement('img');
+      im.className = 'lg lg-l';
+      im.alt = '';
+      im.src = u;
+      im.onload = () => URL.revokeObjectURL(u);
+      $('#r-logo')?.replaceChildren(im);
+      fillSlot($('#modal-body .r-slot'), await safeBlob(name), `Marked safe card for ${name}`);
+      Sound.play('paper');
+    });
     $('#sort').onchange = () => {
+      Sound.play('paper');
       page = 1;
       renderWall();
     };
     $('#brands').onchange = () => {
+      Sound.play('paper');
       page = 1;
       renderWall();
     };
@@ -1777,7 +2412,7 @@
       if (li) {
         e.preventDefault();
         ul.hidden = true;
-        location.hash = '#/verdict/' + li.dataset.v;
+        location.hash = '#/check/' + li.dataset.v;
       }
     });
     $('#dead-form').addEventListener('submit', (e) => {
@@ -1791,7 +2426,7 @@
       }
       const { primary } = lookup(q);
       location.hash =
-        '#/verdict/' +
+        '#/check/' +
         (li ? li.dataset.v : primary && norm(primary.name) === norm(q) ? primary.slug : encodeURIComponent(q));
     });
     document.addEventListener('click', (e) => {
@@ -1799,7 +2434,32 @@
       const tr = t.closest('[data-try]');
       if (tr) {
         dq.value = tr.dataset.try;
-        location.hash = '#/verdict/' + (lookup(tr.dataset.try).primary?.slug || tr.dataset.try);
+        location.hash = '#/check/' + (lookup(tr.dataset.try).primary?.slug || encodeURIComponent(tr.dataset.try));
+        return;
+      }
+      const co = t.closest('[data-copy-only]');
+      if (co) {
+        copy(pageURL(co.dataset.copyOnly));
+        co.closest('details')?.removeAttribute('open');
+        return;
+      }
+      const ns = t.closest('[data-share]');
+      if (ns) {
+        nativeShare(ns.dataset.share);
+        return;
+      }
+      if (t.closest('.share-m a')) {
+        t.closest('details')?.removeAttribute('open');
+        return;
+      }
+      $$('details.share[open]').forEach((d) => !d.contains(t) && d.removeAttribute('open'));
+      if (t.closest('[data-dl-safe]')) {
+        const name = $('#modal-title')?.textContent || 'Your product';
+        safeBlob(name).then((b) => {
+          saveBlob(b, `marked-safe-${slug(name)}.png`);
+          Sound.play('shutter');
+          toast('Card saved. Go gloat.');
+        });
         return;
       }
       const c = t.closest('[data-copy]');
@@ -1829,9 +2489,9 @@
   };
 
   /* ---------------- boot ---------------- */
-  loadData()
+  Promise.all([loadData(), loadLogos()])
     .then((data) => {
-      prep(data);
+      prep(data[0]);
       $('#snap').textContent = D.meta?.generated_at
         ? fdate(D.meta.generated_at + 'T17:00:00Z')
         : 'the day the file was opened';
