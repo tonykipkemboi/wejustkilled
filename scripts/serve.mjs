@@ -16,6 +16,11 @@ const TYPES = {
   ".png": "image/png",
   ".jpg": "image/jpeg",
   ".mp4": "video/mp4",
+  ".webm": "audio/webm",
+  ".mp3": "audio/mpeg",
+  ".ogg": "audio/ogg",
+  ".webp": "image/webp",
+  ".ico": "image/x-icon",
   ".svg": "image/svg+xml",
   ".woff2": "font/woff2",
   ".md": "text/markdown; charset=utf-8",
@@ -30,6 +35,12 @@ export const startServer = (port = 8780) =>
     const server = createServer(async (req, res) => {
       const path = decodeURIComponent(new URL(req.url, "http://x").pathname);
       for (const r of rules) if (r.re.test(path)) for (const h of r.headers) res.setHeader(h.key, h.value);
+      // Vercel serves its Web Analytics script itself; locally an empty stub keeps the console clean.
+      if (path === "/_vercel/insights/script.js") {
+        res.setHeader("Content-Type", TYPES[".js"]);
+        res.end("");
+        return;
+      }
       const file = normalize(join(ROOT, path.endsWith("/") ? path + "index.html" : path));
       if (file !== ROOT && !file.startsWith(ROOT + sep)) {
         res.writeHead(403).end("forbidden");

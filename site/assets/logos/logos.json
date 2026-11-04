@@ -1,0 +1,652 @@
+{
+  "note": "Victim logos, fetched once at build time by scripts/fetch_logos.py and self-hosted. Nominative use in a parody; no endorsement implied.",
+  "victims": {
+    "ahrefs": {
+      "file": "ahrefs-com.webp",
+      "domain": "ahrefs.com"
+    },
+    "apollo": {
+      "file": "apollo-io.webp",
+      "domain": "apollo.io"
+    },
+    "base44": {
+      "file": "base44-com.webp",
+      "domain": "base44.com"
+    },
+    "blacksmith": {
+      "file": "blacksmith-sh.webp",
+      "domain": "blacksmith.sh"
+    },
+    "brandwatch": {
+      "file": "brandwatch-com.webp",
+      "domain": "brandwatch.com"
+    },
+    "brave-search": {
+      "file": "search-brave-com.webp",
+      "domain": "search.brave.com"
+    },
+    "calendly": {
+      "file": "calendly-com.webp",
+      "domain": "calendly.com"
+    },
+    "canva": {
+      "file": "canva-com.webp",
+      "domain": "canva.com"
+    },
+    "capcut": {
+      "file": "capcut-com.webp",
+      "domain": "capcut.com"
+    },
+    "careerflow": {
+      "file": "careerflow-ai.webp",
+      "domain": "careerflow.ai"
+    },
+    "chatgpt": {
+      "file": "chatgpt-com.webp",
+      "domain": "chatgpt.com"
+    },
+    "chatgpt-spaces": {
+      "file": "chatgpt-com.webp",
+      "domain": "chatgpt.com"
+    },
+    "claude": {
+      "file": "claude-ai.webp",
+      "domain": "claude.ai"
+    },
+    "claude-code": {
+      "file": "claude-ai.webp",
+      "domain": "claude.ai"
+    },
+    "claude-duet": {
+      "file": "claude-ai.webp",
+      "domain": "claude.ai"
+    },
+    "clay": {
+      "file": "clay-com.webp",
+      "domain": "clay.com"
+    },
+    "cloudflare": {
+      "file": "cloudflare-com.webp",
+      "domain": "cloudflare.com"
+    },
+    "cluely": {
+      "file": "cluely-com.webp",
+      "domain": "cluely.com"
+    },
+    "cursor": {
+      "file": "cursor-com.webp",
+      "domain": "cursor.com"
+    },
+    "dexscreener-ads": {
+      "file": "dexscreener-com.webp",
+      "domain": "dexscreener.com"
+    },
+    "duolingo": {
+      "file": "duolingo-com.webp",
+      "domain": "duolingo.com"
+    },
+    "fal": {
+      "file": "fal-ai.webp",
+      "domain": "fal.ai"
+    },
+    "gemini": {
+      "file": "gemini-google-com.webp",
+      "domain": "gemini.google.com"
+    },
+    "github-actions": {
+      "file": "github-com.webp",
+      "domain": "github.com"
+    },
+    "google-fonts": {
+      "file": "fonts-google-com.webp",
+      "domain": "fonts.google.com"
+    },
+    "google-translate": {
+      "file": "translate-google-com.webp",
+      "domain": "translate.google.com"
+    },
+    "grammarly": {
+      "file": "grammarly-com.webp",
+      "domain": "grammarly.com"
+    },
+    "granola": {
+      "file": "granola-ai.webp",
+      "domain": "granola.ai"
+    },
+    "hevy": {
+      "file": "hevyapp-com.webp",
+      "domain": "hevyapp.com"
+    },
+    "higgsfield": {
+      "file": "higgsfield-ai.webp",
+      "domain": "higgsfield.ai"
+    },
+    "hubspot": {
+      "file": "hubspot-com.webp",
+      "domain": "hubspot.com"
+    },
+    "indeed": {
+      "file": "indeed-com.webp",
+      "domain": "indeed.com"
+    },
+    "instantly": {
+      "file": "instantly-ai.webp",
+      "domain": "instantly.ai"
+    },
+    "interview-coder": {
+      "file": "interviewcoder-co.webp",
+      "domain": "interviewcoder.co"
+    },
+    "jira": {
+      "file": "atlassian-com.webp",
+      "domain": "atlassian.com"
+    },
+    "kickresume": {
+      "file": "kickresume-com.webp",
+      "domain": "kickresume.com"
+    },
+    "ladders": {
+      "file": "theladders-com.webp",
+      "domain": "theladders.com"
+    },
+    "lemlist": {
+      "file": "lemlist-com.webp",
+      "domain": "lemlist.com"
+    },
+    "linkedin": {
+      "file": "linkedin-com.webp",
+      "domain": "linkedin.com"
+    },
+    "linkedin-recruiter": {
+      "file": "linkedin-com.webp",
+      "domain": "linkedin.com"
+    },
+    "linkedin-sales-navigator": {
+      "file": "linkedin-com.webp",
+      "domain": "linkedin.com"
+    },
+    "linktree": {
+      "file": "linktr-ee.webp",
+      "domain": "linktr.ee"
+    },
+    "loom": {
+      "file": "loom-com.webp",
+      "domain": "loom.com"
+    },
+    "lovable": {
+      "file": "lovable-dev.webp",
+      "domain": "lovable.dev"
+    },
+    "mailchimp": {
+      "file": "mailchimp-com.webp",
+      "domain": "mailchimp.com"
+    },
+    "makeugc": {
+      "file": "makeugc-ai.webp",
+      "domain": "makeugc.ai"
+    },
+    "manus": {
+      "file": "manus-im.webp",
+      "domain": "manus.im"
+    },
+    "manychat": {
+      "file": "manychat-com.webp",
+      "domain": "manychat.com"
+    },
+    "meta-ads-manager": {
+      "file": "meta-com.webp",
+      "domain": "meta.com"
+    },
+    "mobbin": {
+      "file": "mobbin-com.webp",
+      "domain": "mobbin.com"
+    },
+    "modash": {
+      "file": "modash-io.webp",
+      "domain": "modash.io"
+    },
+    "monster": {
+      "file": "monster-com.webp",
+      "domain": "monster.com"
+    },
+    "moz": {
+      "file": "moz-com.webp",
+      "domain": "moz.com"
+    },
+    "notion": {
+      "file": "notion-so.webp",
+      "domain": "notion.so"
+    },
+    "obsidian": {
+      "file": "obsidian-md.webp",
+      "domain": "obsidian.md"
+    },
+    "openai-deep-research": {
+      "file": "openai-com.webp",
+      "domain": "openai.com"
+    },
+    "openai-pages": {
+      "file": "openai-com.webp",
+      "domain": "openai.com"
+    },
+    "openai-prism": {
+      "file": "openai-com.webp",
+      "domain": "openai.com"
+    },
+    "openart": {
+      "file": "openart-ai.webp",
+      "domain": "openart.ai"
+    },
+    "openrouter": {
+      "file": "openrouter-ai.webp",
+      "domain": "openrouter.ai"
+    },
+    "opus-clip": {
+      "file": "opus-pro.webp",
+      "domain": "opus.pro"
+    },
+    "overleaf": {
+      "file": "overleaf-com.webp",
+      "domain": "overleaf.com"
+    },
+    "pangram": {
+      "file": "pangram-com.webp",
+      "domain": "pangram.com"
+    },
+    "plausible": {
+      "file": "plausible-io.webp",
+      "domain": "plausible.io"
+    },
+    "profound": {
+      "file": "tryprofound-com.webp",
+      "domain": "tryprofound.com"
+    },
+    "remotion": {
+      "file": "remotion-dev.webp",
+      "domain": "remotion.dev"
+    },
+    "retool": {
+      "file": "retool-com.webp",
+      "domain": "retool.com"
+    },
+    "runway": {
+      "file": "runwayml-com.webp",
+      "domain": "runwayml.com"
+    },
+    "screen-studio": {
+      "file": "screen-studio.webp",
+      "domain": "screen.studio"
+    },
+    "semrush": {
+      "file": "semrush-com.webp",
+      "domain": "semrush.com"
+    },
+    "serpapi": {
+      "file": "serpapi-com.webp",
+      "domain": "serpapi.com"
+    },
+    "shopify": {
+      "file": "shopify-com.webp",
+      "domain": "shopify.com"
+    },
+    "skool": {
+      "file": "skool-com.webp",
+      "domain": "skool.com"
+    },
+    "sprout-social": {
+      "file": "sproutsocial-com.webp",
+      "domain": "sproutsocial.com"
+    },
+    "stripe": {
+      "file": "stripe-com.webp",
+      "domain": "stripe.com"
+    },
+    "superhuman": {
+      "file": "superhuman-com.webp",
+      "domain": "superhuman.com"
+    },
+    "superwhisper": {
+      "file": "superwhisper-com.webp",
+      "domain": "superwhisper.com"
+    },
+    "tavily": {
+      "file": "tavily-com.webp",
+      "domain": "tavily.com"
+    },
+    "teal": {
+      "file": "tealhq-com.webp",
+      "domain": "tealhq.com"
+    },
+    "the-bloomberg-terminal": {
+      "file": "bloomberg-com.webp",
+      "domain": "bloomberg.com"
+    },
+    "the-chrome-web-store": {
+      "file": "chromewebstore-google-com.webp",
+      "domain": "chromewebstore.google.com"
+    },
+    "tinder": {
+      "file": "tinder-com.webp",
+      "domain": "tinder.com"
+    },
+    "topview": {
+      "file": "topview-ai.webp",
+      "domain": "topview.ai"
+    },
+    "typeform": {
+      "file": "typeform-com.webp",
+      "domain": "typeform.com"
+    },
+    "whop": {
+      "file": "whop-com.webp",
+      "domain": "whop.com"
+    },
+    "willow-voice": {
+      "file": "willowvoice-com.webp",
+      "domain": "willowvoice.com"
+    },
+    "wise": {
+      "file": "wise-com.webp",
+      "domain": "wise.com"
+    },
+    "wispr-flow": {
+      "file": "wisprflow-ai.webp",
+      "domain": "wisprflow.ai"
+    },
+    "yahoo-finance": {
+      "file": "finance-yahoo-com.webp",
+      "domain": "finance.yahoo.com"
+    },
+    "youtube": {
+      "file": "youtube-com.webp",
+      "domain": "youtube.com"
+    },
+    "zendesk": {
+      "file": "zendesk-com.webp",
+      "domain": "zendesk.com"
+    },
+    "zoom": {
+      "file": "zoom-us.webp",
+      "domain": "zoom.us"
+    },
+    "icloud": {
+      "file": "icloud-com.webp",
+      "domain": "icloud.com"
+    },
+    "n8n": {
+      "file": "n8n-io.webp",
+      "domain": "n8n.io"
+    }
+  },
+  "killers": {
+    "vovy_ai": "k/vovy-ai.webp",
+    "_ar9av": "k/ar9av.webp",
+    "crowdreply_io": "k/crowdreply-io.webp",
+    "vammu920": "k/vammu920.webp",
+    "yapsdotgg": "k/yapsdotgg.webp",
+    "shipper_now": "k/shipper-now.webp",
+    "textbackdoor": "k/textbackdoor.webp",
+    "hassenrkeder": "k/hassenrkeder.webp",
+    "hussainkeder": "k/hussainkeder.webp",
+    "huge_icons": "k/huge-icons.webp",
+    "aimlapi": "k/aimlapi.webp",
+    "kozerafilip": "k/kozerafilip.webp",
+    "enricholab": "k/enricholab.webp",
+    "getjinxo": "k/getjinxo.webp",
+    "sandwatchai": "k/sandwatchai.webp",
+    "mehdi96_": "k/mehdi96.webp",
+    "wen_rahme": "k/wen-rahme.webp",
+    "winstongu_": "k/winstongu.webp",
+    "richobray": "k/richobray.webp",
+    "letcontactabhi": "k/letcontactabhi.webp",
+    "richard_yts": "k/richard-yts.webp",
+    "chigozieap": "k/chigozieap.webp",
+    "aditya_vellanki": "k/aditya-vellanki.webp",
+    "fedepontehq": "k/fedepontehq.webp",
+    "raulgrosario": "k/raulgrosario.webp",
+    "peteryueai": "k/peteryueai.webp",
+    "svemyh": "k/svemyh.webp",
+    "tdinh_me": "k/tdinh-me.webp",
+    "matchaman11": "k/matchaman11.webp",
+    "ericjing_ai": "k/ericjing-ai.webp",
+    "adrianhqs": "k/adrianhqs.webp",
+    "usedotai": "k/usedotai.webp",
+    "dannyinsf_": "k/dannyinsf.webp",
+    "prateek_vortex": "k/prateek-vortex.webp",
+    "davidim": "k/davidim.webp",
+    "getlovedbyai": "k/getlovedbyai.webp",
+    "reasonmachines": "k/reasonmachines.webp",
+    "blakefakhoury": "k/blakefakhoury.webp",
+    "hikerell": "k/hikerell.webp",
+    "hii_mohit": "k/hii-mohit.webp",
+    "alfcrowley": "k/alfcrowley.webp",
+    "vortiq_x": "k/vortiq-x.webp",
+    "arjunkshah21": "k/arjunkshah21.webp",
+    "video_router": "k/video-router.webp",
+    "chasehuh": "k/chasehuh.webp",
+    "andrey__hq": "k/andrey-hq.webp",
+    "caseyrowland": "k/caseyrowland.webp",
+    "chhddavid": "k/chhddavid.webp",
+    "aniketmaurya": "k/aniketmaurya.webp",
+    "leadpoetai": "k/leadpoetai.webp",
+    "just_unmute": "k/just-unmute.webp",
+    "bharath_uwu": "k/bharath-uwu.webp",
+    "shengkunye": "k/shengkunye.webp",
+    "andymarrows": "k/andymarrows.webp",
+    "ilanasseo": "k/ilanasseo.webp",
+    "yeab2k": "k/yeab2k.webp",
+    "archfoundryai": "k/archfoundryai.webp",
+    "ahmadafterhours": "k/ahmadafterhours.webp",
+    "yarslav": "k/yarslav.webp",
+    "motionstudiouse": "k/motionstudiouse.webp",
+    "routergrowth": "k/routergrowth.webp",
+    "pauline_cx": "k/pauline-cx.webp",
+    "tonykwon_x": "k/tonykwon-x.webp",
+    "goodielogan": "k/goodielogan.webp",
+    "linearityhq": "k/linearityhq.webp",
+    "antoniolob69903": "k/antoniolob69903.webp",
+    "ziwenxu_": "k/ziwenxu.webp",
+    "chddaniel": "k/chddaniel.webp",
+    "emilsnotes": "k/emilsnotes.webp",
+    "brexy_ai": "k/brexy-ai.webp",
+    "precious_tagy": "k/precious-tagy.webp",
+    "gstneural": "k/gstneural.webp",
+    "riverkhan": "k/riverkhan.webp",
+    "clawddevs": "k/clawddevs.webp",
+    "georgecurtiss": "k/georgecurtiss.webp",
+    "axelmandres": "k/axelmandres.webp",
+    "veedstudio": "k/veedstudio.webp",
+    "1of10media": "k/1of10media.webp",
+    "heymytend": "k/heymytend.webp",
+    "shahrier_arham": "k/shahrier-arham.webp",
+    "tripmazerai": "k/tripmazerai.webp",
+    "anva331": "k/anva331.webp",
+    "zuriobozuwa": "k/zuriobozuwa.webp",
+    "gaddipatiharsha": "k/gaddipatiharsha.webp",
+    "nilxbh": "k/nilxbh.webp",
+    "mabhi1999": "k/mabhi1999.webp",
+    "sushant_pingale": "k/sushant-pingale.webp",
+    "jasperli0122": "k/jasperli0122.webp",
+    "kaify_co": "k/kaify-co.webp",
+    "maxjendrall": "k/maxjendrall.webp",
+    "imnotmatt_eth": "k/imnotmatt-eth.webp",
+    "itsmatthewao": "k/itsmatthewao.webp",
+    "clonertopower10": "k/clonertopower10.webp",
+    "code_nocode": "k/code-nocode.webp",
+    "coledermo": "k/coledermo.webp",
+    "motionfly_co": "k/motionfly-co.webp",
+    "heyaskr": "k/heyaskr.webp",
+    "maxhirsch13": "k/maxhirsch13.webp",
+    "sirius_protocol": "k/sirius-protocol.webp",
+    "chrisbarnes3d": "k/chrisbarnes3d.webp",
+    "ankittharol": "k/ankittharol.webp",
+    "serenatan5": "k/serenatan5.webp",
+    "jenniehuang78": "k/jenniehuang78.webp",
+    "theopic": "k/theopic.webp",
+    "leadsnotify": "k/leadsnotify.webp",
+    "nestymee": "k/nestymee.webp",
+    "maxfusionai": "k/maxfusionai.webp",
+    "devsanghavi05": "k/devsanghavi05.webp",
+    "guikyoki": "k/guikyoki.webp",
+    "askjeremyai": "k/askjeremyai.webp",
+    "stealthgpt": "k/stealthgpt.webp",
+    "ldt0545": "k/ldt0545.webp",
+    "ecompol": "k/ecompol.webp",
+    "clementhu666": "k/clementhu666.webp",
+    "lp_nav": "k/lp-nav.webp",
+    "sterlingtrvtech": "k/sterlingtrvtech.webp",
+    "sai_borg": "k/sai-borg.webp",
+    "cutjamm": "k/cutjamm.webp",
+    "vincentmdlm": "k/vincentmdlm.webp",
+    "davidgelberg": "k/davidgelberg.webp",
+    "zidanez08902030": "k/zidanez08902030.webp",
+    "gilhildebrand": "k/gilhildebrand.webp",
+    "iamqhsin_luna": "k/iamqhsin-luna.webp",
+    "techie_piyush": "k/techie-piyush.webp",
+    "benbuaron_": "k/benbuaron.webp",
+    "fidelcacheflow": "k/fidelcacheflow.webp",
+    "aryan_2190": "k/aryan-2190.webp",
+    "realakashanand": "k/realakashanand.webp",
+    "vakholomtadze": "k/vakholomtadze.webp",
+    "motion_so": "k/motion-so.webp",
+    "itsukiployee": "k/itsukiployee.webp",
+    "damienhe": "k/damienhe.webp",
+    "daleverett": "k/daleverett.webp",
+    "naijanestdapp": "k/naijanestdapp.webp",
+    "mutchtaba2": "k/mutchtaba2.webp",
+    "dennisonbertram": "k/dennisonbertram.webp",
+    "uaghazadae": "k/uaghazadae.webp",
+    "kmkaric": "k/kmkaric.webp",
+    "jjjerrydupe": "k/jjjerrydupe.webp",
+    "eliasrrecom": "k/eliasrrecom.webp",
+    "tszhoi19": "k/tszhoi19.webp",
+    "paperasseai": "k/paperasseai.webp",
+    "krcekmatej": "k/krcekmatej.webp",
+    "tyhho0": "k/tyhho0.webp",
+    "vincemundy": "k/vincemundy.webp",
+    "matt_teeixeira": "k/matt-teeixeira.webp",
+    "examiverseai": "k/examiverseai.webp",
+    "smakosh": "k/smakosh.webp",
+    "aryahaidari0000": "k/aryahaidari0000.webp",
+    "octodang": "k/octodang.webp",
+    "dean_shabi": "k/dean-shabi.webp",
+    "andrasczeizel": "k/andrasczeizel.webp",
+    "launchlabsos": "k/launchlabsos.webp",
+    "adarsh1429": "k/adarsh1429.webp",
+    "ian_builds": "k/ian-builds.webp",
+    "obsideai": "k/obsideai.webp",
+    "grahamparker": "k/grahamparker.webp",
+    "heybraza_x": "k/heybraza-x.webp",
+    "pairofcarkeys": "k/pairofcarkeys.webp",
+    "adikulkarni6": "k/adikulkarni6.webp",
+    "royalpinto007": "k/royalpinto007.webp",
+    "leodexio": "k/leodexio.webp",
+    "0xsatyajit": "k/0xsatyajit.webp",
+    "sudonslookup": "k/sudonslookup.webp",
+    "anirudh_twt": "k/anirudh-twt.webp",
+    "cop_on_fire": "k/cop-on-fire.webp",
+    "sjolt_ai": "k/sjolt-ai.webp",
+    "moltenrockai": "k/moltenrockai.webp",
+    "blumbuilds": "k/blumbuilds.webp",
+    "mike_dreach": "k/mike-dreach.webp",
+    "ashu_veoforge": "k/ashu-veoforge.webp",
+    "toapisai": "k/toapisai.webp",
+    "victoriazmei": "k/victoriazmei.webp",
+    "0xcl4r": "k/0xcl4r.webp",
+    "johann_sath": "k/johann-sath.webp",
+    "ayombarudi": "k/ayombarudi.webp",
+    "0xproject": "k/0xproject.webp",
+    "pipscabal": "k/pipscabal.webp",
+    "michaelheredia": "k/michaelheredia.webp",
+    "calebmccombs2": "k/calebmccombs2.webp",
+    "im_santiago_min": "k/im-santiago-min.webp",
+    "kandy_dev": "k/kandy-dev.webp",
+    "hardikhs2806": "k/hardikhs2806.webp",
+    "ajaysohmshetty": "k/ajaysohmshetty.webp",
+    "madmonkeymedia3": "k/madmonkeymedia3.webp",
+    "alixjaffar": "k/alixjaffar.webp",
+    "itsnazar17": "k/itsnazar17.webp",
+    "gym_battles": "k/gym-battles.webp",
+    "catalyzeagency": "k/catalyzeagency.webp",
+    "emr_jesy": "k/emr-jesy.webp",
+    "tejasgupta67820": "k/tejasgupta67820.webp",
+    "zaidbren": "k/zaidbren.webp",
+    "mosaic_so": "k/mosaic-so.webp",
+    "omnigems_ai": "k/omnigems-ai.webp",
+    "averroes_ai": "k/averroes-ai.webp",
+    "devinesposito": "k/devinesposito.webp",
+    "blazemajorszn": "k/blazemajorszn.webp",
+    "printify": "k/printify.webp",
+    "0xyyy77": "k/0xyyy77.webp",
+    "zachrose51": "k/zachrose51.webp",
+    "joyli629": "k/joyli629.webp",
+    "alejandrochitu": "k/alejandrochitu.webp",
+    "charaf_ecomwize": "k/charaf-ecomwize.webp",
+    "hatrioai": "k/hatrioai.webp",
+    "deepnsec": "k/deepnsec.webp",
+    "peec_ai": "k/peec-ai.webp",
+    "mdoooow": "k/mdoooow.webp",
+    "uxmiles": "k/uxmiles.webp",
+    "nilesharnaiya": "k/nilesharnaiya.webp",
+    "imsanyi": "k/imsanyi.webp",
+    "albysjourney": "k/albysjourney.webp",
+    "cdxker": "k/cdxker.webp",
+    "gjdaniel99": "k/gjdaniel99.webp",
+    "bandm8official": "k/bandm8official.webp",
+    "acquisition_lab": "k/acquisition-lab.webp",
+    "gauravsbuilding": "k/gauravsbuilding.webp",
+    "pmfluency": "k/pmfluency.webp",
+    "trybagel": "k/trybagel.webp",
+    "jackson99ai": "k/jackson99ai.webp",
+    "smartlead_ai": "k/smartlead-ai.webp",
+    "arguedotfun": "k/arguedotfun.webp",
+    "muschairs": "k/muschairs.webp",
+    "draftbit": "k/draftbit.webp",
+    "dispodragons": "k/dispodragons.webp",
+    "arlanr": "k/arlanr.webp",
+    "checkit30330637": "k/checkit30330637.webp",
+    "realmihai_matei": "k/realmihai-matei.webp",
+    "carlsoncheng_": "k/carlsoncheng.webp",
+    "ohadpil": "k/ohadpil.webp",
+    "oopzlabs": "k/oopzlabs.webp",
+    "its_mohamedomar": "k/its-mohamedomar.webp",
+    "norton_jac7213": "k/norton-jac7213.webp",
+    "tarunbhambra": "k/tarunbhambra.webp",
+    "sixreportcom": "k/sixreportcom.webp",
+    "sanhikroy": "k/sanhikroy.webp",
+    "vccmac": "k/vccmac.webp",
+    "sam_starkman": "k/sam-starkman.webp",
+    "nerdychefsai": "k/nerdychefsai.webp",
+    "sainiranja42163": "k/sainiranja42163.webp",
+    "harshit71706941": "k/harshit71706941.webp",
+    "xeriscoin": "k/xeriscoin.webp",
+    "yusukelp": "k/yusukelp.webp",
+    "matthewbarge": "k/matthewbarge.webp",
+    "purushottambagh": "k/purushottambagh.webp",
+    "there_hq": "k/there-hq.webp",
+    "yellowman617": "k/yellowman617.webp",
+    "belal_m_amin": "k/belal-m-amin.webp",
+    "_jasonsilberman": "k/jasonsilberman.webp",
+    "elliotnorrevik": "k/elliotnorrevik.webp",
+    "aiwithmihir": "k/aiwithmihir.webp",
+    "mintlify": "k/mintlify.webp",
+    "hosang": "k/hosang.webp",
+    "ceobanzzz": "k/ceobanzzz.webp",
+    "irushishah": "k/irushishah.webp",
+    "nimavatmanan": "k/nimavatmanan.webp",
+    "arbelfs3": "k/arbelfs3.webp",
+    "sourishsharma17": "k/sourishsharma17.webp",
+    "adamry_n": "k/adamry-n.webp",
+    "dulrajnr": "k/dulrajnr.webp",
+    "dhravyashah": "k/dhravyashah.webp",
+    "buildredthread": "k/buildredthread.webp",
+    "amirareplies": "k/amirareplies.webp",
+    "jonan_zz": "k/jonan-zz.webp",
+    "lucas_montano": "k/lucas-montano.webp",
+    "im_roy_lee": "k/im-roy-lee.webp",
+    "jake__ai": "k/jake-ai.webp",
+    "groqllc": "k/groqllc.webp",
+    "jakemruth": "k/jakemruth.webp",
+    "raheelahmadxai": "k/raheelahmadxai.webp"
+  }
+}

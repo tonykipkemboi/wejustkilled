@@ -8,7 +8,9 @@
       name="description"
       content="305 launch posts claimed to have “just killed” another product. 298 victims. Zero confirmed deaths. Is your product dead? Check the morgue."
     />
-    <meta name="theme-color" content="#0b0a09" />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="theme-color" content="#11100e" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="We Just Killed" />
     <meta property="og:title" content="Is your product dead?" />
@@ -34,6 +36,21 @@
     <meta name="twitter:image" content="https://wejustkilled.app/og.png" />
     <link rel="icon" href="favicon.svg" type="image/svg+xml" />
     <link rel="preload" href="kills.json" as="fetch" crossorigin="anonymous" />
+    <script src="theme.js"></script>
+    <link
+      rel="preload"
+      href="assets/fonts/barlow-condensed-800-normal-latin.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin="anonymous"
+    />
+    <link
+      rel="preload"
+      href="assets/fonts/ibm-plex-mono-400-normal-latin.woff2"
+      as="font"
+      type="font/woff2"
+      crossorigin="anonymous"
+    />
     <link rel="stylesheet" href="assets/fonts/fonts.css" />
     <link rel="stylesheet" href="style.css" />
   </head>
@@ -42,7 +59,7 @@
 
     <header class="top" id="top">
       <a class="logo" href="#/" aria-label="We Just Killed, home"
-        ><span class="logo-k" aria-hidden="true">🔪</span><span>WE JUST <b>KILLED</b></span></a
+        ><span class="logo-m" aria-hidden="true">DLH</span><span class="logo-w">We just <b>killed</b></span></a
       >
       <nav class="nav" aria-label="Main">
         <a href="#/cases" data-nav="cases">Case files</a>
@@ -52,7 +69,7 @@
         <a href="#/timeline" data-nav="timeline">Outbreak</a>
       </nav>
       <div class="top-act">
-        <button class="ibtn" id="sound" aria-pressed="false" title="Sound is off" aria-label="Toggle sound">
+        <button class="ibtn snd" id="sound" type="button" aria-pressed="false" title="Sound is off">
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor" />
             <path
@@ -65,102 +82,87 @@
             />
             <path class="s-off" d="M16 9l5 6M21 9l-5 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
           </svg>
+          <span class="snd-l">Sound</span>
         </button>
-        <a class="btn btn-sm btn-tape" href="#/report">Report a kill</a>
+        <a class="btn btn-sm btn-line" href="#/report">Report a kill</a>
       </div>
     </header>
+
+    <div class="cord" id="cord">
+      <canvas class="cord-c" id="cord-c" aria-hidden="true"></canvas>
+      <button class="cord-h" id="lights" type="button" aria-pressed="false" aria-label="Toggle lights">
+        <span class="cord-tip" aria-hidden="true">Pull for lights</span>
+      </button>
+    </div>
 
     <main id="main">
       <!-- HOME -->
       <section class="view" id="v-home" data-view="home">
         <div class="hero" id="hero">
-          <div class="siren" aria-hidden="true"><i class="s-r"></i><i class="s-b"></i></div>
-          <svg class="chalk" viewBox="0 0 600 400" aria-hidden="true">
-            <defs>
-              <filter id="rough">
-                <feTurbulence type="fractalNoise" baseFrequency=".04" numOctaves="2" seed="3" />
-                <feDisplacementMap in="SourceGraphic" scale="6" />
-              </filter>
-            </defs>
-            <g
-              filter="url(#rough)"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <rect x="150" y="70" width="260" height="260" rx="62" transform="rotate(-14 280 200)" />
-              <path d="M230 175l40 40M270 175l-40 40M320 175l40 40M360 175l-40 40" transform="rotate(-14 280 200)" />
-              <path d="M240 270q55-35 110 0" transform="rotate(-14 280 200)" />
-            </g>
-          </svg>
-          <div class="markers" aria-hidden="true">
-            <span class="mk mk1">1</span><span class="mk mk2">2</span><span class="mk mk3">3</span>
-          </div>
+          <div class="hero-main">
+            <p class="formno">
+              <span>Form DLH-1</span><span class="fn-2">Department of Launch Homicide</span><span>Case files open</span>
+            </p>
+            <h1 class="hl" aria-label="We just killed…">
+              <span class="hl-a">We just killed</span>
+              <span class="hl-v" aria-hidden="true"><span id="hv">Notion.</span><i class="caret"></i></span>
+            </h1>
+            <p class="hl-by" id="hl-by" aria-live="off">&nbsp;</p>
 
-          <div class="hero-in">
-            <div class="hero-main">
-              <p class="kicker">
-                <span class="dot"></span> Department of Launch Homicide<span class="k2"> · case files open</span>
+            <form class="check" id="dead-form" role="search" autocomplete="off">
+              <label for="dead-q" class="check-l"
+                ><span class="fno" aria-hidden="true">Box 1</span>Is my product dead?</label
+              >
+              <div class="check-row">
+                <input
+                  id="dead-q"
+                  type="search"
+                  placeholder="Type your product…"
+                  aria-autocomplete="list"
+                  aria-controls="dead-sug"
+                  aria-describedby="dead-hint"
+                  spellcheck="false"
+                  enterkeyhint="search"
+                  maxlength="60"
+                />
+                <button class="btn btn-stamp" type="submit">Run the check</button>
+              </div>
+              <ul class="dead-sug" id="dead-sug" role="listbox" aria-label="Known victims" hidden></ul>
+              <p class="dead-try" id="dead-hint">
+                <span id="dead-try">Checks every “we just killed” post on file.</span>
               </p>
-              <h1 class="hl" aria-label="We just killed…">
-                <span class="hl-a">WE JUST</span>
-                <span class="hl-b">KILLED</span>
-                <span class="hl-v" aria-hidden="true"><span id="hv">NOTION.</span><i class="caret"></i></span>
-              </h1>
-              <p class="hl-by" id="hl-by" aria-live="off">&nbsp;</p>
-
-              <form class="dead" id="dead-form" role="search" autocomplete="off">
-                <label for="dead-q" class="dead-l">Is my product dead?</label>
-                <div class="dead-row">
-                  <input
-                    id="dead-q"
-                    type="search"
-                    placeholder="Type any product… (try Notion)"
-                    aria-autocomplete="list"
-                    aria-controls="dead-sug"
-                    spellcheck="false"
-                  />
-                  <button class="btn btn-red" type="submit">Check the morgue</button>
-                </div>
-                <ul class="dead-sug" id="dead-sug" role="listbox" hidden></ul>
-                <p class="dead-try" id="dead-try"></p>
-              </form>
-            </div>
-
-            <aside class="hero-side">
-              <div class="feed" aria-label="Kill feed: recent kill claims">
-                <div class="feed-h">
-                  <span class="live"><i></i>LIVE</span> KILL FEED <span class="feed-sub">real posts, newest first</span>
-                </div>
-                <ol class="feed-list" id="feed"></ol>
-              </div>
-              <div class="count" id="count">
-                <div class="count-main">
-                  <span class="count-l">Body count</span><b id="c-kills">0</b
-                  ><span class="count-s">kill claims on file</span>
-                </div>
-                <div class="count-row">
-                  <div><b id="c-victims">0</b><span>victims</span></div>
-                  <div><b id="c-killers">0</b><span>suspects</span></div>
-                  <div><b class="g">0</b><span>actual deaths</span></div>
-                </div>
-              </div>
-            </aside>
+            </form>
           </div>
+
+          <aside class="hero-side" aria-label="Evidence log">
+            <div class="feed">
+              <div class="feed-h">
+                <span class="live"><i></i>Teletype</span> Incoming kill claims
+              </div>
+              <ol class="feed-list" id="feed"></ol>
+            </div>
+            <dl class="count" id="count">
+              <div class="count-main">
+                <dt>Body count</dt>
+                <dd id="c-kills">0</dd>
+              </div>
+              <div>
+                <dt>Victims</dt>
+                <dd id="c-victims">0</dd>
+              </div>
+              <div>
+                <dt>Suspects</dt>
+                <dd id="c-killers">0</dd>
+              </div>
+              <div>
+                <dt>Actual deaths</dt>
+                <dd class="g">0</dd>
+              </div>
+            </dl>
+          </aside>
           <p class="hero-credit">
             Every case links to the original post. All victims are believed to be alive and well.
           </p>
-          <a class="scroll-cue" href="#h-outbreak" aria-label="Scroll to the evidence"
-            ><span>examine the evidence</span><i></i
-          ></a>
-          <div class="tape tape-a" aria-hidden="true">
-            <div class="tape-t">
-              CRIME SCENE · DO NOT CROSS · WE JUST KILLED · CRIME SCENE · DO NOT CROSS · WE JUST KILLED · CRIME SCENE ·
-              DO NOT CROSS · WE JUST KILLED ·&nbsp;
-            </div>
-          </div>
         </div>
 
         <section class="sec" id="h-outbreak">
@@ -170,7 +172,7 @@
             <p class="sec-sub" id="h-outbreak-sub"></p>
           </div>
           <div id="h-chart" class="rv"></div>
-          <p class="sec-more rv"><a class="btn" href="#/timeline">Read the full outbreak report →</a></p>
+          <p class="sec-more rv"><a class="btn" href="#/timeline">Read the full outbreak report</a></p>
         </section>
 
         <section class="sec sec-morgue" id="h-morgue">
@@ -180,7 +182,7 @@
             <p class="sec-sub">Each one pronounced dead, repeatedly, in public. Each one still taking signups.</p>
           </div>
           <div class="graves" id="h-graves"></div>
-          <p class="sec-more rv"><a class="btn" href="#/morgue">Walk the whole cemetery →</a></p>
+          <p class="sec-more rv"><a class="btn" href="#/morgue">Walk the whole cemetery</a></p>
         </section>
 
         <section class="sec" id="h-board">
@@ -189,14 +191,14 @@
               <p class="eyebrow">Exhibit 3 · The evidence board</p>
               <h2>Follow the red string.</h2>
               <p class="sec-sub">
-                Every repeat victim and repeat offender, pinned to one corkboard. Drag the polaroids. Zoom in. Find the
+                Every repeat victim and repeat offender, pinned to one corkboard. Drag the photos. Zoom in. Find the
                 connections the detectives missed.
               </p>
-              <a class="btn btn-red" href="#/board">Open the evidence board →</a>
+              <a class="btn btn-stamp" href="#/board">Open the evidence board</a>
             </div>
             <a class="bt-img" href="#/board" aria-label="Open the evidence board"
-              ><span class="bt-pol bt1"></span><span class="bt-card bt2">HIGGSFIELD</span
-              ><span class="bt-pol bt3"></span><span class="bt-card bt4">LOVABLE</span
+              ><span class="bt-pol bt1"></span><span class="bt-card bt2">Higgsfield</span
+              ><span class="bt-pol bt3"></span><span class="bt-card bt4">Lovable</span
               ><svg viewBox="0 0 100 100" preserveAspectRatio="none">
                 <path d="M20 28Q40 30 62 18M24 30Q22 50 26 66M62 20Q72 40 74 60M28 68Q50 72 72 62" /></svg
             ></a>
@@ -210,7 +212,7 @@
             <p class="sec-sub">Approach with caution. They will try to kill your SaaS too.</p>
           </div>
           <div class="posters" id="h-posters"></div>
-          <p class="sec-more rv"><a class="btn" href="#/wanted">See every suspect →</a></p>
+          <p class="sec-more rv"><a class="btn" href="#/wanted">See every suspect</a></p>
         </section>
 
         <section class="sec" id="h-cases">
@@ -220,8 +222,8 @@
           </div>
           <div class="wall" id="h-wall"></div>
           <p class="sec-more rv">
-            <a class="btn btn-red" href="#/cases">Open all <span class="n-kills">305</span> case files →</a>
-            <button class="btn" data-random>🎲 Random case</button>
+            <a class="btn btn-stamp" href="#/cases">Open all <span class="n-kills">305</span> case files</a>
+            <button class="btn" type="button" data-random>Pull a random case</button>
           </p>
         </section>
       </section>
@@ -255,12 +257,12 @@
             <option value="victims">Most victims per post</option>
           </select>
           <label class="toggle"><input type="checkbox" id="brands" /><span>Named products only</span></label>
-          <button class="btn btn-sm" data-random>🎲 Random</button>
+          <button class="btn btn-sm" type="button" data-random>Random case</button>
         </div>
         <div class="chips" id="chips"></div>
         <p class="result-n" id="result-n" aria-live="polite"></p>
         <div class="wall" id="wall"></div>
-        <div class="more" id="more"><button class="btn" id="more-btn">Open more case files</button></div>
+        <div class="more" id="more"><button class="btn" type="button" id="more-btn">Open more case files</button></div>
       </section>
 
       <!-- BOARD -->
@@ -277,9 +279,9 @@
           </div>
           <div class="board-note"><b>Evidence board</b><span id="board-legend"></span></div>
           <div class="board-ctl" role="toolbar" aria-label="Board controls">
-            <button class="ibtn" data-z="1.25" aria-label="Zoom in">+</button
-            ><button class="ibtn" data-z="0.8" aria-label="Zoom out">−</button
-            ><button class="ibtn" data-z="0" aria-label="Fit board">⤢</button>
+            <button class="ibtn" type="button" data-z="1.25" aria-label="Zoom in">+</button
+            ><button class="ibtn" type="button" data-z="0.8" aria-label="Zoom out">−</button
+            ><button class="ibtn" type="button" data-z="0" aria-label="Fit board">Fit</button>
           </div>
           <div class="board-panel" id="board-panel" hidden></div>
         </div>
@@ -291,11 +293,10 @@
           <p class="eyebrow">The morgue</p>
           <h1 class="ph">Here lie the products we killed.</h1>
           <p class="sec-sub">
-            Ranked by how many times each was publicly pronounced dead. Tap a stone for its death certificate.
+            Ranked by how many times each was publicly pronounced dead. Open a drawer for its death certificate.
           </p>
         </div>
         <div class="graves graves-full" id="graves"></div>
-        <div class="fog" aria-hidden="true"></div>
       </section>
 
       <!-- WANTED -->
@@ -332,11 +333,11 @@
           </p>
           <p>
             <a
-              class="btn btn-red"
+              class="btn btn-stamp"
               target="_blank"
               rel="noopener noreferrer"
-              href="https://x.com/intent/post?text=%F0%9F%9A%A8%20Reporting%20a%20kill%3A%20&hashtags=WeJustKilled"
-              >🚨 File a report on X</a
+              href="https://x.com/intent/post?text=Reporting%20a%20kill%3A%20&amp;hashtags=WeJustKilled"
+              >File a report on X</a
             >
           </p>
           <h2>Rules of evidence</h2>
@@ -351,10 +352,10 @@
 
     <nav class="tabbar" aria-label="Sections">
       <a href="#/cases" data-nav="cases"
-        ><svg viewBox="0 0 24 24"><path d="M3 6h7l2 2h9v11H3z" /></svg><span>Cases</span></a
+        ><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h7l2 2h9v11H3z" /></svg><span>Cases</span></a
       >
       <a href="#/board" data-nav="board"
-        ><svg viewBox="0 0 24 24">
+        ><svg viewBox="0 0 24 24" aria-hidden="true">
           <circle cx="6" cy="7" r="2.5" />
           <circle cx="18" cy="9" r="2.5" />
           <circle cx="10" cy="18" r="2.5" />
@@ -362,42 +363,46 @@
         ><span>Board</span></a
       >
       <a href="#/morgue" data-nav="morgue"
-        ><svg viewBox="0 0 24 24"><path d="M6 21V10a6 6 0 0112 0v11zM12 9v6M9.5 11.5h5" /></svg><span>Morgue</span></a
+        ><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 21V10a6 6 0 0112 0v11zM12 9v6M9.5 11.5h5" /></svg
+        ><span>Morgue</span></a
       >
       <a href="#/wanted" data-nav="wanted"
-        ><svg viewBox="0 0 24 24">
+        ><svg viewBox="0 0 24 24" aria-hidden="true">
           <rect x="5" y="3" width="14" height="18" rx="1" />
           <circle cx="12" cy="10" r="3" />
           <path d="M8 18c1-2.5 7-2.5 8 0" /></svg
         ><span>Wanted</span></a
       >
       <a href="#/timeline" data-nav="timeline"
-        ><svg viewBox="0 0 24 24"><path d="M4 20V14M9 20V10M14 20V12M19 20V4" /></svg><span>Outbreak</span></a
+        ><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V14M9 20V10M14 20V12M19 20V4" /></svg
+        ><span>Outbreak</span></a
       >
     </nav>
 
     <div class="modal" id="modal" hidden>
       <div class="modal-bg" data-close></div>
-      <div class="modal-in" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-        <button class="ibtn modal-x" data-close aria-label="Close">✕</button>
+      <div class="modal-in" id="modal-in" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <button class="ibtn modal-x" type="button" data-close aria-label="Close">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+          </svg>
+        </button>
         <div id="modal-body"></div>
       </div>
     </div>
     <div class="toast" id="toast" role="status" hidden></div>
 
     <footer class="foot">
-      <div class="tape tape-f" aria-hidden="true">
-        <div class="tape-t rev">
-          NO PRODUCTS WERE HARMED · ALL VICTIMS STILL ALIVE · NO PRODUCTS WERE HARMED · ALL VICTIMS STILL ALIVE · NO
-          PRODUCTS WERE HARMED · ALL VICTIMS STILL ALIVE ·&nbsp;
-        </div>
-      </div>
       <div class="foot-in">
-        <p class="foot-logo">WE JUST <b>KILLED</b></p>
-        <p>
+        <div class="foot-a">
+          <p class="foot-logo">We just <b>killed</b></p>
+          <p class="foot-form">Form DLH-1 · Filed in triplicate · No products were harmed</p>
+        </div>
+        <p class="foot-b">
           A loving parody of a launch-post cliché. Every case links to the original post on X; quotes and metrics are as
           they appeared on <span id="snap">the day the file was opened</span>. Not affiliated with X, or with any
-          victim, killer, or suspect. All victims are believed to be alive and well.
+          victim, killer, or suspect. Logos belong to their owners and appear only to identify them; no endorsement is
+          implied. All victims are believed to be alive and well.
         </p>
         <p class="foot-credit">
           <span class="fc-l">Preview video music</span> &quot;Sneaky Snitch&quot; Kevin MacLeod (<a
@@ -412,6 +417,10 @@
           <a href="http://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer license"
             >http://creativecommons.org/licenses/by/4.0/</a
           >
+        </p>
+        <p class="foot-credit">
+          <span class="fc-l">Sound effects</span> CC0 foley from Kenney and Freesound contributors. Fonts under the SIL
+          Open Font License.
         </p>
       </div>
     </footer>

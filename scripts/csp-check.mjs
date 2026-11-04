@@ -29,6 +29,9 @@ const ROUTES = [
   "#/cert/notion",
   "#/verdict/notion",
   "#/verdict/definitely-not-a-product",
+  "#/check/notion",
+  "#/check/definitely-not-a-product",
+  "#/check/" + encodeURIComponent("Acme Rocket Skates"),
   "#/cases?q=killed",
 ];
 
@@ -53,25 +56,44 @@ const cspHook = () => {
   );
 };
 
-// 1. Every route under the real CSP.
-{
-  const ctx = await browser.newContext({ viewport: { width: 1440, height: 900 } });
+// 1. Every route under the real CSP, in both themes, at desktop and phone widths.
+for (const [theme, width, height] of [
+  ["dark", 1440, 900],
+  ["light", 390, 844],
+]) {
+  const ctx = await browser.newContext({ viewport: { width, height }, colorScheme: theme });
   await ctx.addInitScript(cspHook);
   const page = await ctx.newPage();
-  watch(page, "csp");
+  watch(page, `csp ${theme} ${width}`);
   const res = await page.goto(BASE, { waitUntil: "networkidle" });
   if (!res.headers()["content-security-policy"]) problems.push("CSP header missing from local server");
   await page.waitForTimeout(1500);
+  const t0 = await page.evaluate(() => document.documentElement.dataset.theme);
+  if (t0 !== theme) problems.push(`${theme}: theme.js picked ${t0} for prefers-color-scheme ${theme}`);
   if (SHOTS) {
     mkdirSync(SHOTS, { recursive: true });
-    await page.screenshot({ path: `${SHOTS}/csp-home.png` });
+    await page.screenshot({ path: `${SHOTS}/csp-home-${theme}.png` });
   }
   for (const r of ROUTES) {
     await page.evaluate((h) => (location.hash = h), r);
     await page.waitForTimeout(r.startsWith("#/cert") || r.startsWith("#/victim") ? 1500 : 600);
     if (SHOTS && ["#/board", "#/cert/notion", "#/victim/notion"].includes(r))
-      await page.screenshot({ path: `${SHOTS}/csp-${r.replace(/\W+/g, "-").replace(/^-|-$/g, "")}.png` });
+      await page.screenshot({ path: `${SHOTS}/csp-${theme}-${r.replace(/\W+/g, "-").replace(/^-|-$/g, "")}.png` });
   }
+  await page.evaluate(() => (location.hash = "#/"));
+  await page.waitForTimeout(300);
+  // the light cord is a real button: pulling it flips the theme and is remembered
+  await page.focus("#lights");
+  await page.keyboard.press("Enter");
+  await page.waitForTimeout(500);
+  const cord = await page.evaluate(() => ({
+    t: document.documentElement.dataset.theme,
+    p: document.querySelector("#lights").getAttribute("aria-pressed"),
+    s: localStorage.getItem("wjk-theme"),
+  }));
+  const want = theme === "dark" ? "light" : "dark";
+  if (cord.t !== want || cord.s !== want || cord.p !== String(want === "light"))
+    problems.push(`${theme}: light cord did not toggle the theme (${JSON.stringify(cord)})`);
   // inline styles from templates must have been applied through the CSSOM
   await page.evaluate(() => (location.hash = "#/cases"));
   await page.waitForTimeout(600);
@@ -109,6 +131,11 @@ const HASHES = [
   "#/cases?q=" + encodeURIComponent(P(20)),
   "#/cases?q=amp",
   "#/verdict/" + encodeURIComponent(P(21)),
+  "#/check/" + encodeURIComponent(P(23)),
+  "#/check/" + encodeURIComponent('"><svg onload="window.__pwned=24">'),
+  "#/check/" + encodeURIComponent("javascript:window.__pwned=25"),
+  "#/check/notion",
+  "#/check/" + encodeURIComponent(P(7)),
   "#/month/" + encodeURIComponent("<svg/onload=window.__pwned=22>"),
   "#/victim/__proto__",
   "#/cert/constructor",
@@ -139,13 +166,19 @@ const HASHES = [
           if (/^on/i.test(a.name)) bad.push(`event handler attribute ${a.name} on <${el.tagName.toLowerCase()}>`);
           if ((a.name === "href" || a.name === "src") && /^\s*javascript:/i.test(a.value)) bad.push(`javascript: URL`);
         }
-        if (el.tagName === "SCRIPT" && !/\/(app|data)\.js$/.test(el.src)) bad.push("unexpected <script>");
+        if (el.tagName === "SCRIPT" && !/\/(app|data|theme)\.js$|\/_vercel\/insights\/script\.js$/.test(el.src))
+          bad.push("unexpected <script>");
         if (
           el.tagName === "IMG" &&
           el.src &&
           !/^(https:\/\/(pbs|abs)\.twimg\.com\/|blob:|http:\/\/127\.0\.0\.1)/.test(el.src)
         )
           bad.push(`unexpected img src ${el.src}`);
+      }
+      // share menus: every target must be a plain https:// or sms: link
+      for (const a of document.querySelectorAll(".share-m a")) {
+        const u = new URL(a.href, location.href);
+        if (u.protocol !== "https:" && u.protocol !== "sms:") bad.push(`share link with ${u.protocol}`);
       }
       return bad;
     });
