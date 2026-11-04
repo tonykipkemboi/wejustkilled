@@ -1,6 +1,7 @@
 # We Just Killed
 
 A parody "case file" of startup launch posts on X that claim to have "just killed" another product.
+Live at **[wejustkilled.app](https://wejustkilled.app)**.
 305 cases from January 2023 to November 2026, each with a victim, a killer, the evidence post and a printable death certificate.
 
 ![Home page](docs/img/home.png)

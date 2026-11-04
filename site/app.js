@@ -56,10 +56,8 @@
   };
   const rng = (seed) => () => (seed = (seed * 1664525 + 1013904223) >>> 0) / 4294967296;
   const avSize = (u, sz) => (u ? u.replace(/_(normal|bigger|mini|200x200|400x400)(\.\w+)$/, `_${sz}$2`) : u);
-  const SITE =
-    /^(localhost|127\.|0\.0\.0\.0|$)/.test(location.hostname) || location.protocol === 'file:'
-      ? 'wejustkilled.com'
-      : location.host;
+  // Brand domain printed on certificates; fixed so www/preview hosts don't leak in.
+  const SITE = 'wejustkilled.app';
   const pageURL = (h) => location.href.split('#')[0] + h;
   const intent = (text, url) =>
     'https://x.com/intent/post?text=' + encodeURIComponent(text) + (url ? '&url=' + encodeURIComponent(url) : '');

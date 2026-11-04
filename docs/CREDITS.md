@@ -11,4 +11,4 @@ http://creativecommons.org/licenses/by/4.0/
 
 ## Video footage
 
-The video footage (og-video*.mp4, og-video-poster.jpg) was AI-generated for the We Just Killed project (wejustkilled.com). The original clip's generated audio was replaced by the music above.
+The video footage (og-video*.mp4, og-video-poster.jpg) was AI-generated for the We Just Killed project (wejustkilled.app). The original clip's generated audio was replaced by the music above.
