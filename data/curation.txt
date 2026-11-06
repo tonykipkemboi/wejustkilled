@@ -216,3 +216,10 @@
 2118127709146759361|Adobe|Pause Preview
 2118082889867035134|The Translation Tax|Velox
 2117808725084033323|Network Discovery Tools|Orbit
+2118443901061128408|Every Stock Screener|Scanr.ai
+2118412330694508861|Higgsfield|Monid
+2118366230268502186|Photoshop|Devmax
+2118357760157049059|Giphy on Slack|Jester
+2118311585936736477|Browser-Based Video Rendering|Motion Engine
+2118307346493391000|beam.win|Wormhole
+2118219242789384576|Your Entire GTM Stack|Orbit

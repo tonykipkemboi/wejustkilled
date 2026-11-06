@@ -6,8 +6,8 @@
 - **Data source:** the X API full-archive search (`search_posts_all`), via the X connector. Every record below is a real post and every metric was returned by the API. Nothing was invented or estimated.
 - **Collected:** 2026-11-04. Metrics are a snapshot from collection time (v1 posts were captured earlier the same day).
 - **Date range searched:** 2023-01-01 to 2026-11-04 (UTC). 2022 was not searched because 2023 had no genuine cases.
-- **Date range found:** 2024-03-04 to 2026-11-04
-- **Totals:** 308 kill claims after verification, 301 distinct victims, 273 distinct killers (accounts).
+- **Date range found:** 2024-03-04 to 2026-11-05
+- **Totals:** 315 kill claims after verification, 306 distinct victims, 279 distinct killers (accounts).
 
 ## Curation rules
 - **Kept:** first-person or product-account claims ("we/I just killed X", "today we killed X") made while launching or promoting the author's own product or feature. X can be a product, a category, a workflow or a habit.
@@ -24,16 +24,16 @@
 - **Victim and killer labels** are the curator's short labels taken from the post text. The killer is the named product, and is blank when the post doesn't name one.
 
 ## Verification
-- **When:** 2026-11-05T06:12:07-05:00 (America/New_York).
+- **When:** 2026-11-06T06:19:20-05:00 (America/New_York).
 - **Method:** Each uncertain case (inferred or blank killer, ambiguous victim, satire or meta, unclear product) was re-fetched by id, with its reply thread (conversation_id search), the author's own follow-ups, quoted posts, author bio and linked-page metadata. Duplicates were collapsed to the earliest post. Every other case names its product in the post text.
-- **Scope:** 164 cases got the deep review (every case with an inferred or blank killer, an ambiguous victim, a satirical or meta tone, or an unclear product, plus the duplicate checks). The other 160 name their own product and victim in the post text and were re-fetched live.
+- **Scope:** 166 cases got the deep review (every case with an inferred or blank killer, an ambiguous victim, a satirical or meta tone, or an unclear product, plus the duplicate checks). The other 165 name their own product and victim in the post text and were re-fetched live.
 - **Status meanings:**
   - confirmed: the stored values are supported by the evidence
   - corrected: the killer was filled in or changed from the evidence
   - unverified: kept, but the killer is still unclear and left blank
   - removed: not a genuine first-party kill, or a duplicate
-- **Counts:** 195 confirmed · 97 corrected · 16 unverified · 16 removed. That takes the total from 321 to 308.
-- **Confidence of kept cases:** {'high': 264, 'medium': 31, 'low': 13}.
+- **Counts:** 200 confirmed · 99 corrected · 16 unverified · 16 removed. That takes the total from 321 to 315.
+- **Confidence of kept cases:** {'high': 271, 'medium': 31, 'low': 13}.
 
 ### Removed cases
 
@@ -173,6 +173,8 @@
 | #0294 | @kozerafilip https://x.com/kozerafilip/status/2117714342485606763 | corrected / medium | killer: (blank) → Sauna (by Wordware) | Author is CEO of sauna.ai by Wordware; replies describe the agentic scheduling feature. | https://x.com/kozerafilip/status/2117714342485606763 |
 | #0299 | @hassenrkeder https://x.com/hassenrkeder/status/2117838342402261415 | corrected / high | killer: (blank) → Anticode | Quote-posts @anticodedev's 'Introducing Anticode 2.1 … 90% cheaper than Claude Code'; the author co-founded @anticodedev. | https://x.com/anticodedev/status/2117834858240029088 |
 | #0300 | @textbackdoor https://x.com/textbackdoor/status/2117898413559914694 | corrected / high | killer: (blank) → Backdoor | Links backdoorai.app ('Backdoor: AI job agent'). | https://backdoorai.app/ |
+| #0311 | @madoutech https://x.com/madoutech/status/2118311585936736477 | corrected / high | killer: (inferred from quoted launch) → Motion Engine | Author quotes their own Motion Engine launch and claims it killed browser-based video rendering; quoted post names Motion Engine explicitly. | https://x.com/madoutech/status/2118311585936736477 |
+| #0313 | @ReallyPhant https://x.com/ReallyPhant/status/2118366230268502186 | corrected / high | killer: (inferred) → Devmax | Devmax founder @ReallyPhant claims Devmax killed Photoshop for Roblox thumbnails; author reply links try-it to devmax.dev. Skipped later identical @femsidzn copy. | https://x.com/ReallyPhant/status/2118366230268502186 |
 
 ## Known gaps and caveats
 - **Result cap.** X relevancy search returned at most about 25 posts per call, and the `next_token` pages after that came back empty. So coverage depends on query wording and window splitting. Long-tail posts with zero engagement in dense months (Jul–Nov 2026) are probably under-sampled.
@@ -230,7 +232,7 @@
 | 2026-08 | 37 |
 | 2026-09 | 38 |
 | 2026-10 | 71 |
-| 2026-11 | 30 |
+| 2026-11 | 37 |
 
 Months searched with zero kept: every month 2023-01 to 2025-05 except 2024-03 (2) and 2024-11 (1).
 
@@ -238,21 +240,21 @@ Months searched with zero kept: every month 2023-01 to 2025-05 except 2024-03 (2
 
 | Rank | Victim | Times killed |
 |---|---|---|
-| 1 | Higgsfield | 12 |
+| 1 | Higgsfield | 13 |
 | 2 | Lovable | 7 |
 | 3 | AI Slop | 5 |
 | 4 | Cursor | 4 |
 | 5 | Notion | 4 |
-| 6 | RAG | 3 |
-| 7 | n8n | 3 |
-| 8 | Semrush | 3 |
-| 9 | Claude Code | 3 |
-| 10 | ChatGPT | 3 |
-| 11 | LinkedIn Sales Navigator | 3 |
-| 12 | Clay | 3 |
-| 13 | LinkedIn | 3 |
-| 14 | 9 Industries | 2 |
-| 15 | Photoshop | 2 |
+| 6 | Photoshop | 3 |
+| 7 | RAG | 3 |
+| 8 | n8n | 3 |
+| 9 | Semrush | 3 |
+| 10 | Claude Code | 3 |
+| 11 | ChatGPT | 3 |
+| 12 | LinkedIn Sales Navigator | 3 |
+| 13 | Clay | 3 |
+| 14 | LinkedIn | 3 |
+| 15 | 9 Industries | 2 |
 | 16 | Vector Databases | 2 |
 | 17 | Loom | 2 |
 | 18 | Canva | 2 |
@@ -276,8 +278,8 @@ Months searched with zero kept: every month 2023-01 to 2025-05 except 2024-03 (2
 1. @im_roy_lee: 9 Industries (12,088 likes, 3,880,219 views), https://x.com/im_roy_lee/status/1938718987975827651
 2. @elliotnorrevik: Software Engineering (11,365 likes, 4,882,000 views), https://x.com/elliotnorrevik/status/1972680653859643446
 3. @ecompol: The Ad Agency (7,156 likes, 1,238,763 views), https://x.com/ecompol/status/2096325166577996108
-4. @shipper_now: Agentic AI (5,375 likes, 1,750,424 views), https://x.com/shipper_now/status/2117242176799412454
-5. @WinstonGu_: Notion (5,240 likes, 771,124 views), https://x.com/WinstonGu_/status/2117336804705927410
+4. @shipper_now: Agentic AI (5,381 likes, 1,754,888 views), https://x.com/shipper_now/status/2117242176799412454
+5. @WinstonGu_: Notion (5,304 likes, 817,797 views), https://x.com/WinstonGu_/status/2117336804705927410
 6. @shengkunye: Exa, Tavily, SerpAPI, Brave Search (4,750 likes, 890,675 views), https://x.com/shengkunye/status/2093050916953903451
 7. @shipper_now: Claude Code (2,975 likes, 867,804 views), https://x.com/shipper_now/status/2113924020223856946
 8. @shengkunye: Everything (2,415 likes, 658,998 views), https://x.com/shengkunye/status/2094502871773651093
@@ -5803,7 +5805,7 @@ Months searched with zero kept: every month 2023-01 to 2025-05 except 2024-03 (2
 - **Post:** https://x.com/svemyh/status/2116605624670933247
 - **Victim(s):** The IDE
 - **Killer product:** Reason (Reason Machines)
-- **Metrics:** 40 likes · 1 reposts · 4 replies · 2,704 views
+- **Metrics:** 40 likes · 1 reposts · 4 replies · 2,706 views
 - **Image:** https://pbs.twimg.com/media/HV-uuhVa0AAIsGc.jpg
 - **Verification:** corrected (high confidence): Quote-posts @reasonmachines' 'Coding in the IDE is over. Introducing Reason'; author is a co-founder. The Halloween framing is tongue-in-cheek, but the launch is real. Evidence: https://x.com/reasonmachines/status/2113986869293916335
 
@@ -5852,7 +5854,7 @@ Months searched with zero kept: every month 2023-01 to 2025-05 except 2024-03 (2
 - **Post:** https://x.com/fedepontehq/status/2116923639463338295
 - **Victim(s):** YC Application Consultants
 - **Killer product:** YC Kit
-- **Metrics:** 4 likes · 0 reposts · 6 replies · 262 views
+- **Metrics:** 4 likes · 0 reposts · 6 replies · 271 views
 - **Image:** https://pbs.twimg.com/media/HWDS1ROW0AAeH2N.jpg
 - **Verification:** confirmed (high confidence): The post names its own product (YC Kit) and the victim explicitly; re-fetched live 2026-11-04. Evidence: https://x.com/fedepontehq/status/2116923639463338295
 
@@ -5874,7 +5876,7 @@ Months searched with zero kept: every month 2023-01 to 2025-05 except 2024-03 (2
 - **Post:** https://x.com/aditya_vellanki/status/2116991713617273194
 - **Victim(s):** Email Procrastination
 - **Killer product:** Sentient
-- **Metrics:** 18 likes · 3 reposts · 3 replies · 1,041 views
+- **Metrics:** 18 likes · 3 reposts · 3 replies · 1,096 views
 - **Image:** https://pbs.twimg.com/amplify_video_thumb/2116990858138722304/img/umC0NQWxWYIn3qEl.jpg
 - **Verification:** confirmed (high confidence): The post names its own product (Sentient) and the victim explicitly; re-fetched live 2026-11-04. Evidence: https://x.com/aditya_vellanki/status/2116991713617273194
 
@@ -5889,7 +5891,7 @@ Months searched with zero kept: every month 2023-01 to 2025-05 except 2024-03 (2
 - **Post:** https://x.com/chigozieap/status/2117192149670466020
 - **Victim(s):** Your Church Media Team
 - **Killer product:** VesselApp
-- **Metrics:** 0 likes · 0 reposts · 0 replies · 17 views
+- **Metrics:** 0 likes · 0 reposts · 0 replies · 20 views
 - **Image:** https://pbs.twimg.com/amplify_video_thumb/2117191980769742848/img/_Ynf_7AxJpnkmcmM.jpg
 - **Verification:** confirmed (high confidence): The post names its own product (VesselApp) and the victim explicitly; re-fetched live 2026-11-04. Evidence: https://x.com/chigozieap/status/2117192149670466020
 
@@ -5910,7 +5912,7 @@ Months searched with zero kept: every month 2023-01 to 2025-05 except 2024-03 (2
 - **Post:** https://x.com/shipper_now/status/2117242176799412454
 - **Victim(s):** Agentic AI
 - **Killer product:** Shipper
-- **Metrics:** 5,375 likes · 692 reposts · 389 replies · 1,750,424 views
+- **Metrics:** 5,381 likes · 691 reposts · 391 replies · 1,754,888 views
 - **Image:** https://pbs.twimg.com/amplify_video_thumb/2117242022562295808/img/zHR8Nv6ivCpOpD7d.jpg
 - **Verification:** confirmed (high confidence): Author is the Shipper account or its team (bio/link: https://shipper.now/); the killer stated or implied in the post matches. Evidence: https://shipper.now/
 
@@ -5927,7 +5929,7 @@ Months searched with zero kept: every month 2023-01 to 2025-05 except 2024-03 (2
 - **Post:** https://x.com/Richard_YTS/status/2117266760621764896
 - **Victim(s):** Photoshop
 - **Killer product:** 1of10
-- **Metrics:** 39 likes · 1 reposts · 6 replies · 5,679 views
+- **Metrics:** 39 likes · 1 reposts · 6 replies · 5,761 views
 - **Image:** https://pbs.twimg.com/amplify_video_thumb/2117266734071861248/img/YQNWgxzWWrAkiD7r.jpg
 - **Verification:** confirmed (high confidence): The post names its own product (1of10) and the victim explicitly; re-fetched live 2026-11-04. Evidence: https://x.com/Richard_YTS/status/2117266760621764896
 
@@ -5950,7 +5952,7 @@ Months searched with zero kept: every month 2023-01 to 2025-05 except 2024-03 (2
 - **Post:** https://x.com/letcontactabhi/status/2117270507061944542
 - **Victim(s):** iCloud; Google Drive; Dropbox
 - **Killer product:** Helumi
-- **Metrics:** 232 likes · 14 reposts · 26 replies · 51,328 views
+- **Metrics:** 232 likes · 14 reposts · 26 replies · 51,543 views
 - **Image:** https://pbs.twimg.com/amplify_video_thumb/2117262136846282752/img/HvE_UkDeo2nBczB6.jpg
 - **Verification:** corrected (high confidence): Author's own reply: 'try helumi for free'. Further replies compare Helumi with iCloud and Dropbox. Evidence: https://x.com/letcontactabhi/status/2117270507061944542
 
@@ -5969,7 +5971,7 @@ Months searched with zero kept: every month 2023-01 to 2025-05 except 2024-03 (2
 - **Post:** https://x.com/RichOBray/status/2117304204603605423
 - **Victim(s):** Clay
 - **Killer product:** Firecrawl
-- **Metrics:** 439 likes · 7 reposts · 18 replies · 93,744 views
+- **Metrics:** 439 likes · 7 reposts · 18 replies · 93,884 views
 - **Image:** none
 - **Verification:** corrected (high confidence): Quote-posts @firecrawl's 'Introducing headless Clay for agents'; author works in developer experience @firecrawl. Evidence: https://x.com/firecrawl/status/2117297576131060140
 
@@ -5982,7 +5984,7 @@ Months searched with zero kept: every month 2023-01 to 2025-05 except 2024-03 (2
 - **Post:** https://x.com/WinstonGu_/status/2117336804705927410
 - **Victim(s):** Notion
 - **Killer product:** Terminus Notes
-- **Metrics:** 5,240 likes · 336 reposts · 276 replies · 771,124 views
+- **Metrics:** 5,304 likes · 341 reposts · 276 replies · 817,797 views
 - **Image:** https://pbs.twimg.com/amplify_video_thumb/2117336516540370944/img/7fSqX0K8ObS5J11g.jpg
 - **Verification:** confirmed (high confidence): The post names its own product (Terminus Notes) and the victim explicitly; re-fetched live 2026-11-04. Evidence: https://x.com/WinstonGu_/status/2117336804705927410
 
@@ -5999,7 +6001,7 @@ Months searched with zero kept: every month 2023-01 to 2025-05 except 2024-03 (2
 - **Post:** https://x.com/wen_rahme/status/2117523303317574121
 - **Victim(s):** Slashy
 - **Killer product:** not named
-- **Metrics:** 5 likes · 0 reposts · 0 replies · 169 views
+- **Metrics:** 5 likes · 0 reposts · 0 replies · 175 views
 - **Image:** none
 - **Verification:** unverified (low confidence): Quote-posts @GaddipatiHarsha's 'We just killed puffle.ai' post; the author co-founded @MetorialAI. Which product killed Slashy is unclear. Evidence: https://x.com/GaddipatiHarsha/status/2117472232054149620
 
@@ -6032,7 +6034,7 @@ Months searched with zero kept: every month 2023-01 to 2025-05 except 2024-03 (2
 - **Post:** https://x.com/Mehdi96_/status/2117601649242083375
 - **Victim(s):** Tab Hopping
 - **Killer product:** not named
-- **Metrics:** 5 likes · 0 reposts · 2 replies · 161 views
+- **Metrics:** 5 likes · 0 reposts · 2 replies · 163 views
 - **Image:** https://pbs.twimg.com/amplify_video_thumb/2117601516286582784/img/VSpL-lretNMuIcJQ.jpg
 - **Verification:** unverified (low confidence): An onchain options price-comparison launch; the product name isn't stated in the post or replies. Evidence: https://x.com/Mehdi96_/status/2117601649242083375
 
@@ -6050,7 +6052,7 @@ Months searched with zero kept: every month 2023-01 to 2025-05 except 2024-03 (2
 - **Post:** https://x.com/SandwatchAI/status/2117616723641639281
 - **Victim(s):** Dexscreener Ads
 - **Killer product:** Sandwatch
-- **Metrics:** 103 likes · 13 reposts · 7 replies · 5,452 views
+- **Metrics:** 106 likes · 14 reposts · 7 replies · 5,662 views
 - **Image:** https://pbs.twimg.com/amplify_video_thumb/2117616300990021632/img/lgWxnj8DbIFZsbkz.jpg
 - **Verification:** confirmed (high confidence): The post names its own product (Sandwatch) and the victim explicitly; re-fetched live 2026-11-04. Evidence: https://x.com/SandwatchAI/status/2117616723641639281
 
@@ -6067,7 +6069,7 @@ Months searched with zero kept: every month 2023-01 to 2025-05 except 2024-03 (2
 - **Post:** https://x.com/getjinxo/status/2117619308180210122
 - **Victim(s):** Agentic AI
 - **Killer product:** Jinxo
-- **Metrics:** 8 likes · 0 reposts · 1 replies · 723 views
+- **Metrics:** 8 likes · 0 reposts · 1 replies · 734 views
 - **Image:** none
 - **Verification:** confirmed (high confidence): Author is the Jinxo account or its team (bio/link: http://GetJinxo.com); the killer stated or implied in the post matches. Evidence: http://GetJinxo.com
 
@@ -6083,7 +6085,7 @@ Months searched with zero kept: every month 2023-01 to 2025-05 except 2024-03 (2
 - **Post:** https://x.com/enricholab/status/2117648555045527970
 - **Victim(s):** Freelance Job Boards
 - **Killer product:** Enricho
-- **Metrics:** 2 likes · 1 reposts · 1 replies · 22 views
+- **Metrics:** 2 likes · 1 reposts · 1 replies · 26 views
 - **Image:** https://pbs.twimg.com/amplify_video_thumb/2117648479447384064/img/M2kJoSOIG-vkRXYw.jpg
 - **Verification:** corrected (high confidence): The self-reply links enricho.co/products/gigs. Evidence: https://enricho.co/products/gigs
 
@@ -6102,7 +6104,7 @@ Months searched with zero kept: every month 2023-01 to 2025-05 except 2024-03 (2
 - **Post:** https://x.com/kozerafilip/status/2117714342485606763
 - **Victim(s):** Calendly
 - **Killer product:** Sauna (by Wordware)
-- **Metrics:** 23 likes · 1 reposts · 3 replies · 3,824 views
+- **Metrics:** 23 likes · 1 reposts · 3 replies · 3,903 views
 - **Image:** https://pbs.twimg.com/amplify_video_thumb/2117714158770909185/img/L_RyQDcmP8odwwJl.jpg
 - **Verification:** corrected (medium confidence): Author is CEO of sauna.ai by Wordware; replies describe the agentic scheduling feature. Evidence: https://x.com/kozerafilip/status/2117714342485606763
 
@@ -6117,7 +6119,7 @@ Months searched with zero kept: every month 2023-01 to 2025-05 except 2024-03 (2
 - **Post:** https://x.com/aimlapi/status/2117720389946138837
 - **Victim(s):** Semrush; Ahrefs
 - **Killer product:** AI/ML API
-- **Metrics:** 34 likes · 5 reposts · 10 replies · 18,350 views
+- **Metrics:** 34 likes · 5 reposts · 10 replies · 19,004 views
 - **Image:** https://pbs.twimg.com/amplify_video_thumb/2117718272346853376/img/aExbMjFiGy_tcPJU.jpg
 - **Verification:** confirmed (high confidence): Author is the AI/ML API account or its team (bio/link: http://aimlapi.com); the killer stated or implied in the post matches. Evidence: http://aimlapi.com
 
@@ -6137,7 +6139,7 @@ Months searched with zero kept: every month 2023-01 to 2025-05 except 2024-03 (2
 - **Post:** https://x.com/orbitai/status/2117808725084033323
 - **Victim(s):** Network Discovery Tools
 - **Killer product:** Orbit
-- **Metrics:** 7 likes · 1 reposts · 2 replies · 905 views
+- **Metrics:** 7 likes · 1 reposts · 2 replies · 949 views
 - **Image:** https://pbs.twimg.com/amplify_video_thumb/2117808508318183424/img/pYqnHo0j0Tn1qvn4.jpg
 - **Verification:** confirmed (high confidence): Product account @orbitai names Orbit Network Graph API and victim network discovery tools in a first-person launch claim; missed in prior same-day scrape. Evidence: https://x.com/orbitai/status/2117808725084033323
 
@@ -6152,7 +6154,7 @@ Months searched with zero kept: every month 2023-01 to 2025-05 except 2024-03 (2
 - **Post:** https://x.com/huge_icons/status/2117824333313925536
 - **Victim(s):** Ugly Icons
 - **Killer product:** Huge Icons
-- **Metrics:** 20 likes · 0 reposts · 1 replies · 1,261 views
+- **Metrics:** 20 likes · 0 reposts · 1 replies · 1,308 views
 - **Image:** none
 - **Verification:** confirmed (high confidence): Author is the Huge Icons account or its team (bio/link: http://hugeicons.com); the killer stated or implied in the post matches. Evidence: http://hugeicons.com
 
@@ -6165,7 +6167,7 @@ Months searched with zero kept: every month 2023-01 to 2025-05 except 2024-03 (2
 - **Post:** https://x.com/hussainkeder/status/2117835354850148448
 - **Victim(s):** Lovable
 - **Killer product:** Anticode
-- **Metrics:** 3 likes · 0 reposts · 0 replies · 17 views
+- **Metrics:** 3 likes · 0 reposts · 0 replies · 20 views
 - **Image:** none
 - **Verification:** confirmed (high confidence): Quote-posts @anticodedev's Anticode 2.1 launch; the author co-founded @anticodedev. Evidence: https://x.com/anticodedev/status/2117834858240029088
 
@@ -6178,7 +6180,7 @@ Months searched with zero kept: every month 2023-01 to 2025-05 except 2024-03 (2
 - **Post:** https://x.com/hassenrkeder/status/2117838342402261415
 - **Victim(s):** Claude Code
 - **Killer product:** Anticode
-- **Metrics:** 1 likes · 0 reposts · 1 replies · 26 views
+- **Metrics:** 1 likes · 0 reposts · 1 replies · 27 views
 - **Image:** none
 - **Verification:** corrected (high confidence): Quote-posts @anticodedev's 'Introducing Anticode 2.1 … 90% cheaper than Claude Code'; the author co-founded @anticodedev. Evidence: https://x.com/anticodedev/status/2117834858240029088
 
@@ -6191,7 +6193,7 @@ Months searched with zero kept: every month 2023-01 to 2025-05 except 2024-03 (2
 - **Post:** https://x.com/textbackdoor/status/2117898413559914694
 - **Victim(s):** LinkedIn
 - **Killer product:** Backdoor
-- **Metrics:** 3 likes · 2 reposts · 0 replies · 341 views
+- **Metrics:** 3 likes · 2 reposts · 0 replies · 361 views
 - **Image:** none
 - **Verification:** corrected (high confidence): Links backdoorai.app ('Backdoor: AI job agent'). Evidence: https://backdoorai.app/
 
@@ -6221,7 +6223,7 @@ Months searched with zero kept: every month 2023-01 to 2025-05 except 2024-03 (2
 - **Post:** https://x.com/yapsdotgg/status/2117950990351495293
 - **Victim(s):** Grok Bot
 - **Killer product:** Stormi
-- **Metrics:** 1 likes · 0 reposts · 0 replies · 108 views
+- **Metrics:** 1 likes · 0 reposts · 0 replies · 118 views
 - **Image:** https://pbs.twimg.com/media/HWRryScWIAAFBk8.jpg
 - **Verification:** confirmed (high confidence): The post names its own product (Stormi) and the victim explicitly; re-fetched live 2026-11-04. Evidence: https://x.com/yapsdotgg/status/2117950990351495293
 
@@ -6237,7 +6239,7 @@ Months searched with zero kept: every month 2023-01 to 2025-05 except 2024-03 (2
 - **Post:** https://x.com/vammu920/status/2117987358213541946
 - **Victim(s):** The Ad Agency
 - **Killer product:** Addy
-- **Metrics:** 0 likes · 0 reposts · 1 replies · 71 views
+- **Metrics:** 0 likes · 0 reposts · 1 replies · 82 views
 - **Image:** https://pbs.twimg.com/ext_tw_video_thumb/2117987338315804672/pu/img/W7_kvymPNKTO9q3z.jpg
 - **Verification:** confirmed (high confidence): The post names its own product (Addy) and the victim explicitly; re-fetched live 2026-11-04. Evidence: https://x.com/vammu920/status/2117987358213541946
 
@@ -6258,7 +6260,7 @@ Months searched with zero kept: every month 2023-01 to 2025-05 except 2024-03 (2
 - **Post:** https://x.com/CrowdReply_io/status/2117988196059697512
 - **Victim(s):** The "Only Big Brands in ChatGPT" Era
 - **Killer product:** CrowdReply
-- **Metrics:** 13 likes · 2 reposts · 5 replies · 1,205 views
+- **Metrics:** 13 likes · 2 reposts · 5 replies · 1,267 views
 - **Image:** https://pbs.twimg.com/amplify_video_thumb/2117988163344019456/img/5dwMcSWX2fLiNesm.jpg
 - **Verification:** confirmed (high confidence): Author is the CrowdReply account or its team (bio/link: http://crowdreply.io); the killer stated or implied in the post matches. Evidence: http://crowdreply.io
 
@@ -6275,7 +6277,7 @@ Months searched with zero kept: every month 2023-01 to 2025-05 except 2024-03 (2
 - **Post:** https://x.com/_ar9av/status/2118018005640888556
 - **Victim(s):** Rogue Agents
 - **Killer product:** Prismor
-- **Metrics:** 36 likes · 1 reposts · 12 replies · 15,564 views
+- **Metrics:** 38 likes · 1 reposts · 12 replies · 15,692 views
 - **Image:** https://pbs.twimg.com/amplify_video_thumb/2118014282386563072/img/-k1bsJ5BPnmSN6QG.jpg
 - **Verification:** confirmed (high confidence): The post names its own product (Prismor) and the victim explicitly; re-fetched live 2026-11-04. Evidence: https://x.com/_ar9av/status/2118018005640888556
 
@@ -6290,7 +6292,7 @@ Months searched with zero kept: every month 2023-01 to 2025-05 except 2024-03 (2
 - **Post:** https://x.com/vovy_ai/status/2118024885184176336
 - **Victim(s):** Your CTO
 - **Killer product:** Vovy
-- **Metrics:** 26 likes · 1 reposts · 4 replies · 1,743 views
+- **Metrics:** 39 likes · 2 reposts · 5 replies · 2,535 views
 - **Image:** https://pbs.twimg.com/amplify_video_thumb/2118023191771721728/img/Vco1d5ac7xwAi5FQ.jpg
 - **Verification:** confirmed (high confidence): The post names its own product (Vovy) and the victim explicitly; re-fetched live 2026-11-04. Evidence: https://x.com/vovy_ai/status/2118024885184176336
 
@@ -6326,7 +6328,7 @@ Months searched with zero kept: every month 2023-01 to 2025-05 except 2024-03 (2
 - **Post:** https://x.com/pausevfx/status/2118127709146759361
 - **Victim(s):** Adobe
 - **Killer product:** Pause Preview
-- **Metrics:** 131 likes · 10 reposts · 13 replies · 81,113 views
+- **Metrics:** 239 likes · 17 reposts · 16 replies · 95,792 views
 - **Image:** https://pbs.twimg.com/amplify_video_thumb/2118127635679383552/img/-z4jxMLE63Jl5G9Q.jpg
 - **Verification:** confirmed (high confidence): Product account @pausevfx names Pause Preview and victim Adobe explicitly in a first-person launch claim. Evidence: https://x.com/pausevfx/status/2118127709146759361
 
@@ -6336,3 +6338,124 @@ Months searched with zero kept: every month 2023-01 to 2025-05 except 2024-03 (2
 >
 > Stop dragging your hands, Change ANYTHING in a prompt!
 > 100% Customizable, 100% Editable. https://t.co/SRINN27Fwb
+
+### Case #0309 | 2026-11-05 | @hunterrice killed Your Entire GTM Stack
+
+- **Date:** 2026-11-05T05:49:56.000Z
+- **Author:** Hunter Rice (@hunterrice) ✓blue
+- **Post:** https://x.com/hunterrice/status/2118219242789384576
+- **Victim(s):** Your Entire GTM Stack
+- **Killer product:** Orbit
+- **Metrics:** 15 likes · 0 reposts · 2 replies · 620 views
+- **Image:** https://pbs.twimg.com/amplify_video_thumb/2118218609512361984/img/5lHg_YKu1maIWPuf.jpg
+- **Verification:** confirmed (high confidence): Orbit founder @hunterrice introduces Orbit for ChatGPT and claims it killed your entire GTM stack in a first-person launch claim. Evidence: https://x.com/hunterrice/status/2118219242789384576
+
+> We just killed your entire GTM stack. 
+>
+> Introducing @orbitai for ChatGPT. 
+>
+> One plugin that solves GTM, CRM enrichment, and personalized outreach: https://t.co/uWwjHTS4GZ
+
+### Case #0310 | 2026-11-05 | @dmytrovirych killed beam.win
+
+- **Date:** 2026-11-05T11:40:02.000Z
+- **Author:** Dmytro Virych (@dmytrovirych) ✓blue
+- **Post:** https://x.com/dmytrovirych/status/2118307346493391000
+- **Victim(s):** beam.win
+- **Killer product:** Wormhole
+- **Metrics:** 5 likes · 0 reposts · 2 replies · 206 views
+- **Image:** https://pbs.twimg.com/amplify_video_thumb/2118307252939407360/img/wZRo5lsIEr-FoGyt.jpg
+- **Verification:** confirmed (high confidence): Author names Wormhole and victim beam.win explicitly in a first-person macOS screen-sharing launch claim. Evidence: https://x.com/dmytrovirych/status/2118307346493391000
+
+> We just killed beam(.)win
+> Meet Wormhole!!! 
+>
+> Screen sharing on macOS has never been so good! https://t.co/zxtbkthOSd
+
+### Case #0311 | 2026-11-05 | @madoutech killed Browser-Based Video Rendering
+
+- **Date:** 2026-11-05T11:56:53.000Z
+- **Author:** Ahmed oubadi (@madoutech) ✓blue
+- **Post:** https://x.com/madoutech/status/2118311585936736477
+- **Victim(s):** Browser-Based Video Rendering
+- **Killer product:** Motion Engine
+- **Metrics:** 2 likes · 0 reposts · 1 replies · 106 views
+- **Image:** none
+- **Verification:** corrected (high confidence): Author quotes their own Motion Engine launch and claims it killed browser-based video rendering; quoted post names Motion Engine explicitly. Evidence: https://x.com/madoutech/status/2118311585936736477
+
+> We just killed browser-based video rendering.
+>
+> No browser. No screen capturing. Just actual frame pixels rendered directly in Rust.
+>
+> Why are we still using browser-based rendering for video creation in the age of AI agents? https://t.co/W9sJdMEJyt
+
+### Case #0312 | 2026-11-05 | @memelord killed Giphy on Slack
+
+- **Date:** 2026-11-05T15:00:21.000Z
+- **Author:** Memelord.com (@memelord) ✓business
+- **Post:** https://x.com/memelord/status/2118357760157049059
+- **Victim(s):** Giphy on Slack
+- **Killer product:** Jester
+- **Metrics:** 88 likes · 20 reposts · 29 replies · 35,663 views
+- **Image:** https://pbs.twimg.com/amplify_video_thumb/2118357680058408960/img/ea4IeJ690qSKPk21.jpg
+- **Verification:** confirmed (high confidence): Product account @memelord names Jester for Slack and victim Giphy on Slack explicitly in a first-person launch claim. Evidence: https://x.com/memelord/status/2118357760157049059
+
+> BREAKING: Today we killed Giphy on Slack
+>
+> Introducing Jester for Slack: the agentic Giphy
+>
+> Try free: https://t.co/oDMc31HvFa https://t.co/ige2PZEwIb
+
+### Case #0313 | 2026-11-05 | @ReallyPhant killed Photoshop
+
+- **Date:** 2026-11-05T15:34:01.000Z
+- **Author:** Phant (@ReallyPhant) ✓blue
+- **Post:** https://x.com/ReallyPhant/status/2118366230268502186
+- **Victim(s):** Photoshop
+- **Killer product:** Devmax
+- **Metrics:** 73 likes · 3 reposts · 7 replies · 4,059 views
+- **Image:** https://pbs.twimg.com/media/HWXyppkXQAAH92E.jpg
+- **Verification:** corrected (high confidence): Devmax founder @ReallyPhant claims Devmax killed Photoshop for Roblox thumbnails; author reply links try-it to devmax.dev. Skipped later identical @femsidzn copy. Evidence: https://x.com/ReallyPhant/status/2118366230268502186
+
+> we just killed photoshop for roblox thumbnails
+>
+> no layers, no blender, no hours of editing
+> just type ur game title 👀
+>
+> #RobloxDev #Roblox https://t.co/zHvdePN6Xn
+
+### Case #0314 | 2026-11-05 | @shengkunye killed Higgsfield
+
+- **Date:** 2026-11-05T18:37:12.000Z
+- **Author:** Shengkun Ye (@shengkunye) ✓blue
+- **Post:** https://x.com/shengkunye/status/2118412330694508861
+- **Victim(s):** Higgsfield
+- **Killer product:** Monid
+- **Metrics:** 241 likes · 17 reposts · 40 replies · 41,576 views
+- **Image:** https://pbs.twimg.com/amplify_video_thumb/2118412048346615808/img/0eyCmmsoGiYsy2gg.jpg
+- **Verification:** confirmed (high confidence): Monid founder @shengkunye claims Monid killed Higgsfield again while introducing HeyGen on Monid; kept founder original and skipped @MonidHQ brand repost. Evidence: https://x.com/shengkunye/status/2118412330694508861
+
+> We just killed Higgsfield again.
+>
+> Introducing @HeyGen at 50% off on @MonidHQ.
+>
+> No subscription needed. https://t.co/u1u2fWthzY
+
+### Case #0315 | 2026-11-05 | @scanrdotai killed Every Stock Screener
+
+- **Date:** 2026-11-05T20:42:39.000Z
+- **Author:** scanr.ai (@scanrdotai) ✓business
+- **Post:** https://x.com/scanrdotai/status/2118443901061128408
+- **Victim(s):** Every Stock Screener
+- **Killer product:** Scanr.ai
+- **Metrics:** 1 likes · 0 reposts · 0 replies · 20 views
+- **Image:** https://pbs.twimg.com/media/HWY2L8nXsAAHw2R.jpg
+- **Verification:** confirmed (high confidence): Product account @scanrdotai names Scanr.ai stage analysis and claims it killed every stock screener in a first-person launch post. Evidence: https://x.com/scanrdotai/status/2118443901061128408
+
+> We just killed every stock screener
+>
+> Introducing stage analysis on https://t.co/wD68mK7yWM, free for all users
+>
+> Scan by stage, rank the matches by Mansfield RS, and see each stock's stage on its chart.
+>
+> https://t.co/oTc89kH2uW https://t.co/xZDc1qnvX2
