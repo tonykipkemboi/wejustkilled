@@ -239,3 +239,14 @@
 2120238850299806175|Grok Bot|Turnstone
 2120214917487657453|Calendly|Pally
 2120208039999676521|Every Software Company|Antideploy
+2120562669820293414|Job Hunting|AiApply
+2120566865747427412|LinkedIn Sales Navigator;Apollo;ZoomInfo|traxy
+2120584469862359342|HeyGen|Graphed UGC Studio
+2120616795556176006|Product Hunt|Agent Hunt (Monid)
+2120598432968818926|The Most Annoying Part of Content Creation|Reelful
+2120476769899708512|Traditional Software Agencies|Starterslab
+2120747307092336905|Grammarly|Pebble
+2120814989351235849|Higgsfield|Arrim
+2120154519631986928|The Billable Hour|Tao IP
+2120473891999281284|Agentic AI|Shipper
+2120533490064404535|Claude Whiteboards;Claude Sheets;Claude Data|PuppyOne
