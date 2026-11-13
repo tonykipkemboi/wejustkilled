@@ -250,3 +250,9 @@
 2120154519631986928|The Billable Hour|Tao IP
 2120473891999281284|Agentic AI|Shipper
 2120533490064404535|Claude Whiteboards;Claude Sheets;Claude Data|PuppyOne
+2120895944241930311|Higgsfield Cinema Studio|Sume Director Studio
+2121076334336364948|Notion;Google Docs;Dropbox|Agent Docs (Agentbox)
+2121009575797436618|Human UGC|Monid × Hypit AI UGC Workflow
+2121070464982528199|Fable 5.2|AutoFAB Cursor for Robots
+2120996874752819365|Figma|CodePress Design Kit
+2121113104251806155|The Worst Part of Using Claude|Tanuki Buddy
