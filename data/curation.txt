@@ -256,3 +256,8 @@
 2121070464982528199|Fable 5.2|AutoFAB Cursor for Robots
 2120996874752819365|Figma|CodePress Design Kit
 2121113104251806155|The Worst Part of Using Claude|Tanuki Buddy
+2121239822283223352|Mailchimp|Max (Frontline)
+2121271879121912029|Clay|Graphed Enrichment Table
+2121321724734046392|A Few More Startups|Grok Bot Meetings
+2121330900172706076|ChatGPT;Gemini;Perplexity|Murer
+2121375625319756079|Webflow|Letter Replicate
