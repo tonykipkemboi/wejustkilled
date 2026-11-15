@@ -261,3 +261,5 @@
 2121321724734046392|A Few More Startups|Grok Bot Meetings
 2121330900172706076|ChatGPT;Gemini;Perplexity|Murer
 2121375625319756079|Webflow|Letter Replicate
+2121383500163236066|Higgsfield|xDots
+2121653571871715657|Apollo|DealerData Signals
