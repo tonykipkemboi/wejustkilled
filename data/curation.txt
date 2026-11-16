@@ -263,3 +263,6 @@
 2121375625319756079|Webflow|Letter Replicate
 2121383500163236066|Higgsfield|xDots
 2121653571871715657|Apollo|DealerData Signals
+2121966765911462082|LinkedIn Sales Navigator|Signl
+2122043419484987462|Adobe Premiere Pro;Adobe After Effects;DaVinci Resolve|Pause Preview ULTRA
+2122194865387978782|App Store|Vibe Capitalists
