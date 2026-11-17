@@ -266,3 +266,8 @@
 2121966765911462082|LinkedIn Sales Navigator|Signl
 2122043419484987462|Adobe Premiere Pro;Adobe After Effects;DaVinci Resolve|Pause Preview ULTRA
 2122194865387978782|App Store|Vibe Capitalists
+2122344648220017101|Claude Opus 5.5 Video Editing|VidRush V2
+2122360748617707536|HubSpot|Max (Frontline)
+2122389240290115774|Voicemail;Email Spam|Fo
+2122408775910863125|Every SaaS Company|AppKeep
+2122522725914931352|Semrush Local;BrightLocal;Whitespark|LocalSEO.to

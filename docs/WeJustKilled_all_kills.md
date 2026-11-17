@@ -6,8 +6,8 @@
 - **Data source:** the X API full-archive search (`search_posts_all`), via the X connector. Every record below is a real post and every metric was returned by the API. Nothing was invented or estimated.
 - **Collected:** 2026-11-04. Metrics are a snapshot from collection time (v1 posts were captured earlier the same day).
 - **Date range searched:** 2023-01-01 to 2026-11-04 (UTC). 2022 was not searched because 2023 had no genuine cases.
-- **Date range found:** 2024-03-04 to 2026-11-16
-- **Totals:** 358 kill claims after verification, 337 distinct victims, 314 distinct killers (accounts).
+- **Date range found:** 2024-03-04 to 2026-11-17
+- **Totals:** 363 kill claims after verification, 344 distinct victims, 318 distinct killers (accounts).
 
 ## Curation rules
 - **Kept:** first-person or product-account claims ("we/I just killed X", "today we killed X") made while launching or promoting the author's own product or feature. X can be a product, a category, a workflow or a habit.
@@ -24,16 +24,16 @@
 - **Victim and killer labels** are the curator's short labels taken from the post text. The killer is the named product, and is blank when the post doesn't name one.
 
 ## Verification
-- **When:** 2026-11-16T05:45:38-05:00 (America/New_York).
+- **When:** 2026-11-17T05:45:00-05:00 (America/New_York).
 - **Method:** Each uncertain case (inferred or blank killer, ambiguous victim, satire or meta, unclear product) was re-fetched by id, with its reply thread (conversation_id search), the author's own follow-ups, quoted posts, author bio and linked-page metadata. Duplicates were collapsed to the earliest post. Every other case names its product in the post text.
-- **Scope:** 192 cases got the deep review (every case with an inferred or blank killer, an ambiguous victim, a satirical or meta tone, or an unclear product, plus the duplicate checks). The other 182 name their own product and victim in the post text and were re-fetched live.
+- **Scope:** 195 cases got the deep review (every case with an inferred or blank killer, an ambiguous victim, a satirical or meta tone, or an unclear product, plus the duplicate checks). The other 184 name their own product and victim in the post text and were re-fetched live.
 - **Status meanings:**
   - confirmed: the stored values are supported by the evidence
   - corrected: the killer was filled in or changed from the evidence
   - unverified: kept, but the killer is still unclear and left blank
   - removed: not a genuine first-party kill, or a duplicate
-- **Counts:** 242 confirmed · 100 corrected · 16 unverified · 16 removed. That takes the total from 355 to 358.
-- **Confidence of kept cases:** {'high': 303, 'medium': 42, 'low': 13}.
+- **Counts:** 247 confirmed · 100 corrected · 16 unverified · 16 removed. That takes the total from 358 to 363.
+- **Confidence of kept cases:** {'high': 308, 'medium': 42, 'low': 13}.
 
 ### Removed cases
 
@@ -233,7 +233,7 @@
 | 2026-08 | 37 |
 | 2026-09 | 38 |
 | 2026-10 | 71 |
-| 2026-11 | 80 |
+| 2026-11 | 85 |
 
 Months searched with zero kept: every month 2023-01 to 2025-05 except 2024-03 (2) and 2024-11 (1).
 
@@ -265,20 +265,21 @@ Months searched with zero kept: every month 2023-01 to 2025-05 except 2024-03 (2
 | 22 | Google Docs | 2 |
 | 23 | Loom | 2 |
 | 24 | Canva | 2 |
-| 25 | Modash | 2 |
-| 26 | Claude | 2 |
-| 27 | The Sales Guru | 2 |
-| 28 | The Ad Agency | 2 |
-| 29 | Reddit SaaS | 2 |
-| 30 | Gemini | 2 |
-| 31 | Human UGC | 2 |
-| 32 | Google Drive | 2 |
-| 33 | Wispr Flow | 2 |
-| 34 | Ahrefs | 2 |
-| 35 | The IDE | 2 |
-| 36 | Grammarly | 2 |
-| 37 | Dropbox | 2 |
-| 38 | Adobe Premiere Pro | 2 |
+| 25 | HubSpot | 2 |
+| 26 | Modash | 2 |
+| 27 | Claude | 2 |
+| 28 | The Sales Guru | 2 |
+| 29 | The Ad Agency | 2 |
+| 30 | Reddit SaaS | 2 |
+| 31 | Gemini | 2 |
+| 32 | Human UGC | 2 |
+| 33 | Google Drive | 2 |
+| 34 | Wispr Flow | 2 |
+| 35 | Ahrefs | 2 |
+| 36 | The IDE | 2 |
+| 37 | Grammarly | 2 |
+| 38 | Dropbox | 2 |
+| 39 | Adobe Premiere Pro | 2 |
 
 ## Most viral kills (by likes)
 
@@ -289,7 +290,7 @@ Months searched with zero kept: every month 2023-01 to 2025-05 except 2024-03 (2
 5. @WinstonGu_: Notion (5,330 likes, 838,391 views), https://x.com/WinstonGu_/status/2117336804705927410
 6. @shengkunye: Exa, Tavily, SerpAPI, Brave Search (4,750 likes, 890,675 views), https://x.com/shengkunye/status/2093050916953903451
 7. @shipper_now: Claude Code (2,975 likes, 867,804 views), https://x.com/shipper_now/status/2113924020223856946
-8. @realGuantum: Claude Whiteboards, Claude Sheets, Claude Data (2,456 likes, 315,453 views), https://x.com/realGuantum/status/2120533490064404535
+8. @realGuantum: Claude Whiteboards, Claude Sheets, Claude Data (2,456 likes, 315,868 views), https://x.com/realGuantum/status/2120533490064404535
 9. @shengkunye: Everything (2,415 likes, 658,998 views), https://x.com/shengkunye/status/2094502871773651093
 10. @nestymee: Photographing Your Clothes (1,973 likes, 1,765,086 views), https://x.com/nestymee/status/2099502353208791428
 
@@ -6752,7 +6753,7 @@ Months searched with zero kept: every month 2023-01 to 2025-05 except 2024-03 (2
 - **Post:** https://x.com/pally/status/2120214917487657453
 - **Victim(s):** Calendly
 - **Killer product:** Pally
-- **Metrics:** 53 likes · 5 reposts · 5 replies · 2,191 views
+- **Metrics:** 53 likes · 5 reposts · 5 replies · 2,314 views
 - **Image:** https://pbs.twimg.com/amplify_video_thumb/2120122789457694720/img/GiGL5AMJb0KPk7uX.jpg
 - **Verification:** confirmed (high confidence): Posted by the @pally brand account (YC S25 AI personal assistant over text): booking links are now built into Pally, replacing Calendly. Evidence: https://x.com/pally/status/2120214917487657453
 
@@ -6771,7 +6772,7 @@ Months searched with zero kept: every month 2023-01 to 2025-05 except 2024-03 (2
 - **Post:** https://x.com/aryanvij02/status/2120238850299806175
 - **Victim(s):** Grok Bot
 - **Killer product:** Turnstone
-- **Metrics:** 63 likes · 8 reposts · 14 replies · 4,729 views
+- **Metrics:** 63 likes · 8 reposts · 14 replies · 4,745 views
 - **Image:** https://pbs.twimg.com/amplify_video_thumb/2120236311194034176/img/dMCYekWeRC0TVpq1.jpg
 - **Verification:** confirmed (high confidence): Founder @aryanvij02 (bio: founder & ceo @ Turnstone, backed by YC) pitches Turnstone as a Grok Bot alternative that lets you bring your existing AI subscriptions; the clip is a Fox News appearance. Evidence: https://x.com/aryanvij02/status/2120238850299806175
 
@@ -6805,7 +6806,7 @@ Months searched with zero kept: every month 2023-01 to 2025-05 except 2024-03 (2
 - **Post:** https://x.com/kabcoder/status/2120476769899708512
 - **Victim(s):** Traditional Software Agencies
 - **Killer product:** Starterslab
-- **Metrics:** 3 likes · 0 reposts · 0 replies · 49 views
+- **Metrics:** 3 likes · 0 reposts · 0 replies · 50 views
 - **Image:** none
 - **Verification:** confirmed (medium confidence): Operator @kabcoder links starterslab.xyz ('You built it. Now make it scale'), a service that takes over AI-built MVPs and makes them production grade, pitched as the end of traditional software agencies. Small account; the product is a service rather than software. Evidence: https://starterslab.xyz
 
@@ -6829,7 +6830,7 @@ Months searched with zero kept: every month 2023-01 to 2025-05 except 2024-03 (2
 - **Post:** https://x.com/realGuantum/status/2120533490064404535
 - **Victim(s):** Claude Whiteboards; Claude Sheets; Claude Data
 - **Killer product:** PuppyOne
-- **Metrics:** 2,456 likes · 15 reposts · 81 replies · 315,453 views
+- **Metrics:** 2,456 likes · 15 reposts · 81 replies · 315,868 views
 - **Image:** https://pbs.twimg.com/amplify_video_thumb/2120532042685526016/img/wYe9cDvFHJadnnoZ.jpg
 - **Verification:** confirmed (high confidence): Builder @realGuantum (bio: building @puppyone_ai) open-sources a free whiteboard, spreadsheet and dashboard that work with any model, as alternatives to Anthropic's new Claude tools, 'to kill Claude's'. His self-reply links @puppyone_ai. Evidence: https://x.com/realGuantum/status/2120534092068642920
 
@@ -6848,7 +6849,7 @@ Months searched with zero kept: every month 2023-01 to 2025-05 except 2024-03 (2
 - **Post:** https://x.com/aidancramer/status/2120562669820293414
 - **Victim(s):** Job Hunting
 - **Killer product:** AiApply
-- **Metrics:** 417 likes · 76 reposts · 90 replies · 335,314 views
+- **Metrics:** 420 likes · 76 reposts · 90 replies · 337,010 views
 - **Image:** https://pbs.twimg.com/ext_tw_video_thumb/2120562647527538688/pu/img/m40xG_huZwoei1CY.jpg
 - **Verification:** confirmed (high confidence): Cofounder @aidancramer introduces AiApply (aiapply.co), a career agent app that scans jobs, skips poor fits and applies with a tailored resume and cover letter, and says it killed job hunting. Evidence: https://x.com/aidancramer/status/2120562669820293414
 
@@ -6877,7 +6878,7 @@ Months searched with zero kept: every month 2023-01 to 2025-05 except 2024-03 (2
 - **Post:** https://x.com/traxy_ai/status/2120566865747427412
 - **Victim(s):** LinkedIn Sales Navigator; Apollo; ZoomInfo
 - **Killer product:** traxy
-- **Metrics:** 6 likes · 0 reposts · 0 replies · 1,372 views
+- **Metrics:** 6 likes · 0 reposts · 0 replies · 1,377 views
 - **Image:** https://pbs.twimg.com/amplify_video_thumb/2120565271442206720/img/f06mrcZw-PPl6T6G.jpg
 - **Verification:** confirmed (high confidence): Product account @traxy_ai (bio: agents that find your warmest leads) launches traxy's high intent leads and names LinkedIn Sales Navigator, Apollo and ZoomInfo as the lead sources it replaces. Evidence: https://x.com/traxy_ai/status/2120566865747427412
 
@@ -6909,7 +6910,7 @@ Months searched with zero kept: every month 2023-01 to 2025-05 except 2024-03 (2
 - **Post:** https://x.com/codyschneider/status/2120584469862359342
 - **Victim(s):** HeyGen
 - **Killer product:** Graphed UGC Studio
-- **Metrics:** 195 likes · 7 reposts · 51 replies · 14,147 views
+- **Metrics:** 195 likes · 7 reposts · 51 replies · 14,757 views
 - **Image:** https://pbs.twimg.com/amplify_video_thumb/2120582607364935680/img/JLuUHwuVRhU1W8qO.jpg
 - **Verification:** confirmed (medium confidence): @codyschneider (bio: building @graphed) mocks the format ('wE jUsT kiLLeD hEyGeN') but means it: he links graphed.com/platform and the graphed-inc ugc-studio skill, a UGC avatar video app with 65 avatars, built as a HeyGen alternative. Tone is self-aware, the product is real. Evidence: https://github.com/graphed-inc/marketing-skills/tree/main/skills/ugc-studio
 
@@ -6944,7 +6945,7 @@ Months searched with zero kept: every month 2023-01 to 2025-05 except 2024-03 (2
 - **Post:** https://x.com/katedeyneka/status/2120598432968818926
 - **Victim(s):** The Most Annoying Part of Content Creation
 - **Killer product:** Reelful
-- **Metrics:** 24 likes · 2 reposts · 1 replies · 1,810 views
+- **Metrics:** 24 likes · 2 reposts · 1 replies · 1,858 views
 - **Image:** https://pbs.twimg.com/amplify_video_thumb/2120598393257160704/img/WzwfO0b2G7OjV9QZ.jpg
 - **Verification:** confirmed (high confidence): Founder @katedeyneka (bio: building @reelful, an agentic video editor on your phone) quotes the Rollup SDK launch and shows Reelful x Rollup syncing her camera roll so the agent builds content from a prompt. Evidence: https://x.com/mwahjiwoo/status/2120566083442860167
 
@@ -6961,7 +6962,7 @@ Months searched with zero kept: every month 2023-01 to 2025-05 except 2024-03 (2
 - **Post:** https://x.com/shengkunye/status/2120616795556176006
 - **Victim(s):** Product Hunt
 - **Killer product:** Agent Hunt (Monid)
-- **Metrics:** 44 likes · 3 reposts · 5 replies · 1,615 views
+- **Metrics:** 44 likes · 3 reposts · 5 replies · 1,640 views
 - **Image:** none
 - **Verification:** confirmed (high confidence): Builder @shengkunye (bio: building @MonidHQ) quotes Monid's launch of Agent Hunt, a leaderboard of agent tools voted on by agents, and says they officially killed Product Hunt. The brand post itself says 'Product Hunt is dead' rather than 'killed'; a co-founder's similar quote (@Jasperli0122, 2120617918446829821) and a third-party one were left out as duplicates. Evidence: https://x.com/MonidHQ/status/2120615823576649734
 
@@ -6996,7 +6997,7 @@ Months searched with zero kept: every month 2023-01 to 2025-05 except 2024-03 (2
 - **Post:** https://x.com/getarrim/status/2120814989351235849
 - **Victim(s):** Higgsfield
 - **Killer product:** Arrim
-- **Metrics:** 3 likes · 0 reposts · 2 replies · 121 views
+- **Metrics:** 3 likes · 0 reposts · 2 replies · 124 views
 - **Image:** https://pbs.twimg.com/amplify_video_thumb/2120813710407049216/img/QMcUL2qmDLVP7UWp.jpg
 - **Verification:** confirmed (high confidence): Product account @getarrim (bio: autonomous marketing agent for ecom) claims its own agent, which studies winning ads and writes and posts new ones, just killed Higgsfield. Evidence: https://x.com/getarrim/status/2120814989351235849
 
@@ -7017,7 +7018,7 @@ Months searched with zero kept: every month 2023-01 to 2025-05 except 2024-03 (2
 - **Post:** https://x.com/davidim/status/2120895944241930311
 - **Victim(s):** Higgsfield Cinema Studio
 - **Killer product:** Sume Director Studio
-- **Metrics:** 1,087 likes · 155 reposts · 153 replies · 226,348 views
+- **Metrics:** 1,087 likes · 155 reposts · 154 replies · 230,515 views
 - **Image:** https://pbs.twimg.com/amplify_video_thumb/2120894036450082816/img/HCltUgVOWVFcA0PG.jpg
 - **Verification:** confirmed (high confidence): Sume CEO @davidim (bio: ceo @sumelabs) launches Sume Director Studio 1.0, the Higgsfield Cinema Studio workflow at Seedance's original cost with no subscription. Teammate @chasehuh's quote of this post (2120897497321373991) was left out as a duplicate; Sume's earlier Higgsfield and Genjutsu kills are separate launches. Evidence: https://x.com/chasehuh/status/2120897497321373991
 
@@ -7034,7 +7035,7 @@ Months searched with zero kept: every month 2023-01 to 2025-05 except 2024-03 (2
 - **Post:** https://x.com/lightninglu10/status/2120996874752819365
 - **Victim(s):** Figma
 - **Killer product:** CodePress Design Kit
-- **Metrics:** 5 likes · 0 reposts · 1 replies · 319 views
+- **Metrics:** 5 likes · 0 reposts · 1 replies · 344 views
 - **Image:** https://pbs.twimg.com/amplify_video_thumb/2120984705717932032/img/ubyEgX_OsE2OoC4q.jpg
 - **Verification:** confirmed (high confidence): Builder @lightninglu10 (bio links codepress.dev) open-sources a design kit that lets coding agents draw screens from a team's real components; his own thread follow-ups say it works with Claude Code or Codex and is free through CodePress. Evidence: https://x.com/lightninglu10/status/2120996877739135059
 
@@ -7053,7 +7054,7 @@ Months searched with zero kept: every month 2023-01 to 2025-05 except 2024-03 (2
 - **Post:** https://x.com/shengkunye/status/2121009575797436618
 - **Victim(s):** Human UGC
 - **Killer product:** Monid × Hypit AI UGC Workflow
-- **Metrics:** 141 likes · 7 reposts · 12 replies · 6,675 views
+- **Metrics:** 141 likes · 7 reposts · 12 replies · 6,752 views
 - **Image:** none
 - **Verification:** confirmed (high confidence): Builder @shengkunye (bio: building @MonidHQ) quotes Monid's launch of an open-sourced agent workflow (with @hypitai) that clones viral UGC styles at $0.03/sec. The brand post itself says 'You don't need $60 human UGC' rather than 'killed', so the founder's post is the kill. Evidence: https://x.com/MonidHQ/status/2121007734757957906
 
@@ -7072,7 +7073,7 @@ Months searched with zero kept: every month 2023-01 to 2025-05 except 2024-03 (2
 - **Post:** https://x.com/AnselDias/status/2121070464982528199
 - **Victim(s):** Fable 5.2
 - **Killer product:** AutoFAB Cursor for Robots
-- **Metrics:** 13 likes · 1 reposts · 4 replies · 1,126 views
+- **Metrics:** 13 likes · 1 reposts · 4 replies · 1,128 views
 - **Image:** none
 - **Verification:** confirmed (medium confidence): Founder @AnselDias (bio: Founder, CEO @AutoFAB_Inc) riffs on @boardyai's meme about the 'We just killed... / Introducing Cursor for...' format, but links a real live demo of AutoFAB's robot that clears 3D printer beds (app.autofab.net/demo). Fable 5.2 is an AI model, so the kill is tongue-in-cheek; Boardy replied 'so fable's dead and i'm apparently next'. Evidence: https://x.com/boardyai/status/2121070590069256234
 
@@ -7091,7 +7092,7 @@ Months searched with zero kept: every month 2023-01 to 2025-05 except 2024-03 (2
 - **Post:** https://x.com/SavannahFeder/status/2121076334336364948
 - **Victim(s):** Notion; Google Docs; Dropbox
 - **Killer product:** Agent Docs (Agentbox)
-- **Metrics:** 184 likes · 3 reposts · 23 replies · 18,252 views
+- **Metrics:** 184 likes · 4 reposts · 23 replies · 18,389 views
 - **Image:** https://pbs.twimg.com/amplify_video_thumb/2121028757288792065/img/qZexIMhxF4Nf0Zt_.jpg
 - **Verification:** confirmed (high confidence): Builder @SavannahFeder (bio: building @tryagentbox) launches agent docs, shared docs that humans and agents edit together; her own follow-up says they live inside Agentbox, the open-source agentic IDE, and @tryagentbox replied to cheer the launch. Evidence: https://x.com/SavannahFeder/status/2121076335007375791
 
@@ -7110,7 +7111,7 @@ Months searched with zero kept: every month 2023-01 to 2025-05 except 2024-03 (2
 - **Post:** https://x.com/SachchitBala/status/2121113104251806155
 - **Victim(s):** The Worst Part of Using Claude
 - **Killer product:** Tanuki Buddy
-- **Metrics:** 2 likes · 1 reposts · 0 replies · 21 views
+- **Metrics:** 2 likes · 1 reposts · 0 replies · 22 views
 - **Image:** https://pbs.twimg.com/amplify_video_thumb/2121113089051602944/img/296QyyvX4YJxvrDP.jpg
 - **Verification:** confirmed (high confidence): Builder @SachchitBala (CTO and co-founder of FschoolAI) ships Tanuki Buddy, an open-source desktop tanuki for Windows that holds up a sign when Claude Code or Codex is working, needs approval, or is done (per the linked GitHub repo). Evidence: https://github.com/SachchitBalamurugan/tanuki-buddy
 
@@ -7124,7 +7125,7 @@ Months searched with zero kept: every month 2023-01 to 2025-05 except 2024-03 (2
 - **Post:** https://x.com/AlvaroVargasM/status/2121239822283223352
 - **Victim(s):** Mailchimp
 - **Killer product:** Max (Frontline)
-- **Metrics:** 2 likes · 1 reposts · 0 replies · 72 views
+- **Metrics:** 2 likes · 1 reposts · 0 replies · 78 views
 - **Image:** https://pbs.twimg.com/amplify_video_thumb/2121239314159865856/img/2dYQrF0gYm3ivrXu.jpg
 - **Verification:** confirmed (high confidence): Founder and CEO @AlvaroVargasM (bio links getfrontline.ai) shows Max, Frontline's AI agent, writing and designing an email campaign from the company's design system, building the audience from the CRM and sending it by email or WhatsApp. Frontline's site lists Max as its personal AI agent. Evidence: https://www.getfrontline.ai
 
@@ -7141,7 +7142,7 @@ Months searched with zero kept: every month 2023-01 to 2025-05 except 2024-03 (2
 - **Post:** https://x.com/codyschneider/status/2121271879121912029
 - **Victim(s):** Clay
 - **Killer product:** Graphed Enrichment Table
-- **Metrics:** 97 likes · 4 reposts · 13 replies · 6,793 views
+- **Metrics:** 97 likes · 4 reposts · 13 replies · 6,893 views
 - **Image:** https://pbs.twimg.com/amplify_video_thumb/2121150211905269760/img/fqP9x3lfNHyhHGl4.jpg
 - **Verification:** confirmed (medium confidence): @codyschneider (bio: building @graphed) mocks the format again ('wE jUsT kiLLeD CLAY .COM') but means it: he links graphed.com/platform for a pay-as-you-go enrichment table, set up as a skill, built as a Clay alternative. Same pattern as his earlier HeyGen post; the tone is self-aware, the product is real. Evidence: https://www.graphed.com/platform
 
@@ -7182,7 +7183,7 @@ Months searched with zero kept: every month 2023-01 to 2025-05 except 2024-03 (2
 - **Post:** https://x.com/larsencc/status/2121321724734046392
 - **Victim(s):** A Few More Startups
 - **Killer product:** Grok Bot Meetings
-- **Metrics:** 238 likes · 2 reposts · 30 replies · 10,553 views
+- **Metrics:** 238 likes · 2 reposts · 30 replies · 10,599 views
 - **Image:** none
 - **Verification:** confirmed (high confidence): Builder @larsencc (bio: works on @grok and @bot at SpaceX SI) quotes @bot's own launch, 'Grok Bot can now join meetings', where it takes notes, answers questions and tracks decisions. Replies read it as a kill of AI note-takers (Otter, Granola, Fireflies and the rest), and he replied 'Damn' to that list. Evidence: https://x.com/bot/status/2121320089920430181
 
@@ -7195,7 +7196,7 @@ Months searched with zero kept: every month 2023-01 to 2025-05 except 2024-03 (2
 - **Post:** https://x.com/vednig/status/2121330900172706076
 - **Victim(s):** ChatGPT; Gemini; Perplexity
 - **Killer product:** Murer
-- **Metrics:** 4 likes · 0 reposts · 3 replies · 205 views
+- **Metrics:** 4 likes · 0 reposts · 3 replies · 208 views
 - **Image:** https://pbs.twimg.com/media/HXB6pMcaUAAA-oO.jpg
 - **Verification:** confirmed (high confidence): Co-founder @vednig (bio: co-founder and CEO @doshare_me) launches murer.ai, a multi-model AI chat with every model in one place and bring-your-own-key support. Evidence: https://www.murer.ai/
 
@@ -7214,7 +7215,7 @@ Months searched with zero kept: every month 2023-01 to 2025-05 except 2024-03 (2
 - **Post:** https://x.com/mathewpregasen/status/2121375625319756079
 - **Victim(s):** Webflow
 - **Killer product:** Letter Replicate
-- **Metrics:** 88 likes · 4 reposts · 12 replies · 1,356 views
+- **Metrics:** 88 likes · 4 reposts · 12 replies · 1,393 views
 - **Image:** https://pbs.twimg.com/amplify_video_thumb/2121375532294258688/img/3kRQJYyKieKy_Owi.jpg
 - **Verification:** confirmed (high confidence): Founder @mathewpregasen (bio: letter, YC F26) launches Replicate from Letter, which moves a Webflow, Framer, Squarespace or Wix site into a GitHub project so teams can build on it with Claude Code or Codex (per letter.dev/replicate). He opens with the format and admits he hates it too. Evidence: https://letter.dev/replicate
 
@@ -7246,7 +7247,7 @@ Months searched with zero kept: every month 2023-01 to 2025-05 except 2024-03 (2
 - **Post:** https://x.com/tryxdots/status/2121383500163236066
 - **Victim(s):** Higgsfield
 - **Killer product:** xDots
-- **Metrics:** 2 likes · 0 reposts · 1 replies · 38 views
+- **Metrics:** 2 likes · 0 reposts · 1 replies · 39 views
 - **Image:** https://pbs.twimg.com/amplify_video_thumb/2121382972389552128/img/lL4iYFZ0SWuuuCCU.jpg
 - **Verification:** confirmed (medium confidence): Brand account @tryxdots (bio: 'Stop paying 50% on Higgsfield') posts the kill for xDots, an AI creative suite for images, video and stories (per xdots.app), offering free video generation and saying it is open source. Small account, no independent confirmation of the open-source claim; product and victim are explicit. Evidence: https://xdots.app
 
@@ -7263,7 +7264,7 @@ Months searched with zero kept: every month 2023-01 to 2025-05 except 2024-03 (2
 - **Post:** https://x.com/daniel_provena/status/2121653571871715657
 - **Victim(s):** Apollo
 - **Killer product:** DealerData Signals
-- **Metrics:** 2 likes · 0 reposts · 2 replies · 89 views
+- **Metrics:** 2 likes · 0 reposts · 2 replies · 97 views
 - **Image:** https://pbs.twimg.com/amplify_video_thumb/2121653472193871872/img/KPTZAHFqNzsIRz8z.jpg
 - **Verification:** confirmed (high confidence): Founder @daniel_provena (bio links provena-ai.com) launches Signals inside DealerData, a car-dealership contact database for the US and Canada that flags GM changes, departures, hiring and ownership changes. The kill is scoped in the post itself ('For car dealers, anyway'), and his own first reply links usedealerdata.com. Evidence: https://usedealerdata.com/
 
@@ -7304,7 +7305,7 @@ Months searched with zero kept: every month 2023-01 to 2025-05 except 2024-03 (2
 - **Post:** https://x.com/vldalecu/status/2121966765911462082
 - **Victim(s):** LinkedIn Sales Navigator
 - **Killer product:** Signl
-- **Metrics:** 1 likes · 1 reposts · 1 replies · 162 views
+- **Metrics:** 1 likes · 1 reposts · 1 replies · 197 views
 - **Image:** https://pbs.twimg.com/amplify_video_thumb/2121966045367848960/img/HZBZXdxdf3BOEoyY.jpg
 - **Verification:** confirmed (medium confidence): Co-founder @vldalecu (bio: Co-Founder @getsignl, links heysignl.com) says intent tools stop at buying signals, then demos the missing steps: finding the email and writing the message. The post doesn't name the product; it comes from his bio and link. Signl's site calls it a LinkedIn social listening engine for B2B sales that finds who shows buying intent and how to reach them. Evidence: https://heysignl.com
 
@@ -7343,7 +7344,7 @@ Months searched with zero kept: every month 2023-01 to 2025-05 except 2024-03 (2
 - **Post:** https://x.com/pausevfx/status/2122043419484987462
 - **Victim(s):** Adobe Premiere Pro; Adobe After Effects; DaVinci Resolve
 - **Killer product:** Pause Preview ULTRA
-- **Metrics:** 37 likes · 1 reposts · 12 replies · 3,584 views
+- **Metrics:** 58 likes · 3 reposts · 14 replies · 5,584 views
 - **Image:** https://pbs.twimg.com/amplify_video_thumb/2122037196026970112/img/6fI_RpIJzk60SaaW.jpg
 - **Verification:** confirmed (high confidence): Product account @pausevfx (bio: 'The AI that actually edits', links pausevfx.com) introduces Pause Preview ULTRA: draw on the frame and prompt, cut by drawing lines, and reuse templates. In replies the team says it still exports Premiere Pro project files, but the goal is for users to skip the timeline altogether. This follows its earlier Pause Preview kill of Adobe (2118127709146759361); it's a new launch, not a duplicate. Evidence: https://www.pausevfx.com
 
@@ -7364,7 +7365,7 @@ Months searched with zero kept: every month 2023-01 to 2025-05 except 2024-03 (2
 - **Post:** https://x.com/startupoppa/status/2122194865387978782
 - **Victim(s):** App Store
 - **Killer product:** Vibe Capitalists
-- **Metrics:** 14 likes · 1 reposts · 3 replies · 1,007 views
+- **Metrics:** 18 likes · 1 reposts · 4 replies · 1,512 views
 - **Image:** https://pbs.twimg.com/media/HXOMP8eawAA4h7j.jpg
 - **Verification:** confirmed (medium confidence): Builder @startupoppa (Alex Kwon, bio: building consumer social apps) quotes his own open-beta launch of @vibecapitalists, a solo weekend project described as a gamified Product Hunt where you invest play money in apps. He takes the kill back in the next line ('jk i didn't'), so it's tongue-in-cheek, but the product is real and live at vibecapitalists.com/beta. Evidence: https://vibecapitalists.com/beta/
 
@@ -7374,3 +7375,157 @@ Months searched with zero kept: every month 2023-01 to 2025-05 except 2024-03 (2
 >
 > ⬇️ open beta ⬇️
 > https://t.co/uuDKbpoI2s https://t.co/wN01FLRalq https://t.co/AGaPyiBxtS
+
+### Case #0359 | 2026-11-16 | @noahmorris killed Claude Opus 5.5 Video Editing
+
+- **Date:** 2026-11-16T15:02:50.000Z
+- **Author:** Noah Morris (@noahmorris) ✓blue
+- **Post:** https://x.com/noahmorris/status/2122344648220017101
+- **Victim(s):** Claude Opus 5.5 Video Editing
+- **Killer product:** VidRush V2
+- **Metrics:** 1,292 likes · 88 reposts · 160 replies · 185,762 views
+- **Image:** https://pbs.twimg.com/amplify_video_thumb/2122343911058198528/img/iOg8S1hLAzK7bjjr.jpg
+- **Verification:** confirmed (high confidence): Co-founder @noahmorris (bio: building @vidrush for the faceless YouTube space) launches VidRush V2, pitched as 'the Claude Code for video production teams', with a thread of his own follow-ups: V2 in beta from $0.80/minute at vidrush.ai, Claude Code editing via MCP coming soon. The victim is Claude Opus 5.5 used as a video editor, as the post names it. Evidence: https://vidrush.ai
+
+> We just KILLED Claude Opus 5.5 Video Editing
+>
+> Introducing VidRush V2 
+>
+> The Claude Code for video production teams. 
+>
+> I gave it a brief Here's what happened (more in thread)↓ https://t.co/HOLVHgSflD
+
+### Case #0360 | 2026-11-16 | @AlvaroVargasM killed HubSpot
+
+- **Date:** 2026-11-16T16:06:48.000Z
+- **Author:** Alvaro Vargas (@AlvaroVargasM) ✓blue
+- **Post:** https://x.com/AlvaroVargasM/status/2122360748617707536
+- **Victim(s):** HubSpot
+- **Killer product:** Max (Frontline)
+- **Metrics:** 1 likes · 0 reposts · 1 replies · 40 views
+- **Image:** https://pbs.twimg.com/amplify_video_thumb/2122360398376517632/img/Z_cIVOoZaVd6jbev.jpg
+- **Verification:** confirmed (high confidence): Founder & CEO @AlvaroVargasM (bio links getfrontline.ai) says @GetFrontlineAI builds a custom headless CRM from a description of your business, positioned against HubSpot. Same author and product as the earlier Mailchimp case (Max (Frontline)); a different victim, so not a duplicate. Evidence: https://www.getfrontline.ai/en
+
+> We just killed Hubspot. 
+>
+> Describe your business to Max or Claude (using our CLI), and we'll build  the perfect CRM for your business in minutes. 
+>
+> Use our UI, or run it completely headless. You can also build your own custom UI with artifacts or extend it with app or website builder (yes we've built our own version or replit/lovable but fully integrated to your CRM, more coming soon). You can create apps like customer or partners portales, help centers, academy's and much more.
+>
+> No drag and drop, templates, iframe forms, or clunky UI's.
+>
+> Sync data from email, whatsapp, meetings and external systems, and build up your company brain from all convos happening across your org.
+>
+> And yes...it's fully governed from day 1 (sharing, permissions, user profiles, object access, and much more).
+>
+> While Hubspot & Salesforce are still planning & struggling to launch a headless CRM. @GetFrontlineAI  is live today at a fraction of the cost.
+
+### Case #0361 | 2026-11-16 | @shivanipod killed Voicemail, Email Spam
+
+- **Date:** 2026-11-16T18:00:01.000Z
+- **Author:** Shivani Poddar (@shivanipod) ✓blue
+- **Post:** https://x.com/shivanipod/status/2122389240290115774
+- **Victim(s):** Voicemail; Email Spam
+- **Killer product:** Fo
+- **Metrics:** 681 likes · 41 reposts · 42 replies · 2,244,428 views
+- **Image:** https://pbs.twimg.com/amplify_video_thumb/2121996295682363392/img/rzuQvmR2hiDvzRWn.jpg
+- **Verification:** confirmed (high confidence): Founder @shivanipod (bio: Founder @wajo_ai, building @hey__fo) announces that Fo, her AI assistant, now has its own inbound phone number and email, so it answers calls and email instead of you. Email is live free today and the sign-up link goes to wajo.ai. Evidence: https://wajo.ai/join-wajo
+
+> We just killed voicemail and email spam forever.
+>
+> Fo now has its own unique phone number and email for not just outbound, but also inbound.
+>
+> We have now given every person an ability to have a digital twin, give out Fo’s email and phone number instead of yours. Shopping checkout, vendors, your landlord, that one ex.
+>
+> Fo picks up every call, answers every email so you never have to get spammed again.
+>
+> Email is free for everyone and available today. We will be slowly rolling out dedicated “Fone” numbers for OG and up users in the US.
+>
+> Sign up for free: https://t.co/9ndFhcNDcm
+
+### Case #0362 | 2026-11-16 | @natnaelgirma27 killed Every SaaS Company
+
+- **Date:** 2026-11-16T19:17:39.000Z
+- **Author:** NATE G (@natnaelgirma27) ✓blue
+- **Post:** https://x.com/natnaelgirma27/status/2122408775910863125
+- **Victim(s):** Every SaaS Company
+- **Killer product:** AppKeep
+- **Metrics:** 58 likes · 1 reposts · 19 replies · 7,553 views
+- **Image:** https://pbs.twimg.com/amplify_video_thumb/2122407833299726336/img/GFXbf4O7nkgxNdqA.jpg
+- **Verification:** confirmed (high confidence): Builder @natnaelgirma27 (bio: building @Motionfly_co and Agent28) introduces AppKeep and replies in the thread with 'try it at' the product link. appkeep.io describes itself as cheap, one-time-purchase alternatives to popular SaaS, hosted for you and editable with AI, which matches the 'every SaaS company' victim. Evidence: https://appkeep.io/
+
+> We just killed every SaaS company.
+>
+> Introducing AppKeep.
+>
+> In the AI era, everyone should have their own personal, customizable software.
+>
+> Imagine finding an app you like, adding it to your collection, and customizing it in real time with AI until it works exactly the way you want.
+>
+> Want a new feature? Change the design? Add a workflow? Just tell AI what you want.
+>
+> And you don't have to worry about the technical stuff.
+>
+> We handle everything:
+> Hosting and deployment
+> Database and infrastructure
+> Maintenance and updates
+> Email services
+> Custom domains
+>
+> You focus on the software. We handle everything behind it.
+>
+> No complicated setup. No managing servers. No endless subscriptions for tools that don't quite fit your needs.
+>
+> Don't adapt to your software. Make your software adapt to you.
+>
+> Welcome to AppKeep.
+>
+> https://t.co/JiCNvX5NfV
+
+### Case #0363 | 2026-11-17 | @indexsy killed Semrush Local, BrightLocal, Whitespark
+
+- **Date:** 2026-11-17T02:50:27.000Z
+- **Author:** Jacky Chou (buying online businesses up to $1m) (@indexsy) ✓blue
+- **Post:** https://x.com/indexsy/status/2122522725914931352
+- **Victim(s):** Semrush Local; BrightLocal; Whitespark
+- **Killer product:** LocalSEO.to
+- **Metrics:** 72 likes · 2 reposts · 13 replies · 12,006 views
+- **Image:** https://pbs.twimg.com/media/HXS2qOGbUAAsTGd.jpg
+- **Verification:** confirmed (high confidence): Builder @indexsy (Jacky Chou) launches LocalSEO.to, a pay-once local rank tracker with geo-grid heatmaps where you bring your own DataForSEO key, and prices it against the three named trackers. 'So I built' plus the live product link make it a first-party launch. Evidence: https://localseo.to/
+
+> I just killed SEMRush (Local), BrightLocal and Whitespark.
+>
+> These PATHETIC rank trackers charge $50 to $300 a month to resell you Google Maps data that costs about a dime per scan.
+>
+> So I built https://t.co/8IKNXyUQVj.
+>
+> You plug in your own DataForSEO key and pay the raw data cost. No monthly fee. No credits that expire.
+>
+> Here's what it does:
+> → Geo-grid heatmaps up to 9×9, for as many keywords as you need
+> → Scheduled rescans, with a timeline to flip back through every past scan
+> → Compares any two scans and shows every point that moved
+> → Ranks you against competitors by share of the top 3 across the grid
+> → Tracks the Local Pack next to your Maps rank
+> → Sends each client one live report link with your logo, marked verified
+> → Audits a Google Business Profile and its website, 0 to 100, with fixes in priority order (beta)
+> → Finds every listing with the wrong name, address or phone (beta)
+> → Ships with an API and MCP server, so Claude Code can run all of it
+>
+> The math for 10 clients, 3 keywords each, a 7×7 grid weekly:
+>
+> 😂 Semrush Local: $3,600 a year
+> 😂 BrightLocal: $747 a year
+> 😂 Whitespark: $600 a year
+> 🫦😮‍💨🫨🤤😩 Your own key: about $46 a year in data
+>
+> Pay once. Lifetime access. 14-day refund.
+>
+> The price goes up $10 every 5 sales, and the pay-once deal ends Dec 16.
+>
+> 📌 Get it here:
+> https://t.co/NrvgxsiKJw
+>
+> TrustMRR:
+> https://t.co/zFdghb4lE7
