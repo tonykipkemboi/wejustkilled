@@ -271,3 +271,7 @@
 2122389240290115774|Voicemail;Email Spam|Fo
 2122408775910863125|Every SaaS Company|AppKeep
 2122522725914931352|Semrush Local;BrightLocal;Whitespark|LocalSEO.to
+2122682781486690721|The Traditional Mobile Security Lab|GoMobSec
+2122752287605174466|Every AI Agent Subscription|Spiral
+2122752346279014737|Local Skills|Glen
+2122766913243922713|Launch Agencies|HyperOrganic
