@@ -275,3 +275,7 @@
 2122752287605174466|Every AI Agent Subscription|Spiral
 2122752346279014737|Local Skills|Glen
 2122766913243922713|Launch Agencies|HyperOrganic
+2122768751603179665|Blender|Devmax
+2123025688504434748|Productivity Apps|Nuzz
+2123035026837369178|Refreshing Stripe for Sales|KaChing
+2123121308397670889|PitchBook|Monid
