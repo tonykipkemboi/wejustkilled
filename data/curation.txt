@@ -282,3 +282,10 @@
 2123365331116667160|Indeed;LinkedIn;Glassdoor|PrepLink AI
 2123476469091651665|Notion|Feedzy
 2123632387447828488|Manually Making Ecom Ads|Create Studio
+2123461368103772637|The Subscription Trap|CreatorOS Voice Studio
+2123492621087834509|The Twelve Words|Meridian Give
+2123737261363560949|Cold Outreach|WhoZnext
+2123756720241664319|The $4,000/mo SDR|WhoZnext
+2123825410345783771|Grok Bot|Plany
+2123852211612795090|Motion|Monet
+2123989267768832396|Expensive macOS Sandboxes|InstaBox
