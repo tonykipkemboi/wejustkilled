@@ -293,3 +293,9 @@
 2124445081864135075|Vamps|Vamp
 2124564644018967006|The Customer Survey|Second Mention
 2124814436334739858|The "Wait, Let Me Give You Some Context" Prompt|Sharpy
+2124880660967944304|AI Note-Takers|J.Doe
+2124901147676758452|Manual Lead Scoring|ICP & TAM Research Engine
+2124908434009260375|Recruiting Agencies|Firecrawl Recruiting Tools
+2124956156217180657|Gojiberry|WhoZnext
+2125144911150567516|Agentic AI|Shipper
+2125144995560833412|Impermanent Loss|HawkFi
