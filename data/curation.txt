@@ -304,3 +304,10 @@
 2125373978680148315|BrightLocal;Semrush|SupaSEO
 2125396963780870639|Google Flights|Firecrawl Flight Tracking
 2125522558577783029|Grok Bot|Shipper
+2125613480028041725|The Prompt Box|J.Doe
+2125620813760242056|Muse;Bot;Dots|Shoply
+2125639607656366526|Honey|Firecrawl Deal Search
+2125640105260150947|Amazon|Firecrawl Deal Search
+2125647752227094839|Apollo;Clay;Gojiberry;LinkedIn Premium;HeyReach|Deberli
+2125673490405859680|Whatever You Used to Get Jobs|Backdoor
+2125898422926680565|Thinking Out Loud|Two Prune
