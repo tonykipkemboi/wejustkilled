@@ -311,3 +311,5 @@
 2125647752227094839|Apollo;Clay;Gojiberry;LinkedIn Premium;HeyReach|Deberli
 2125673490405859680|Whatever You Used to Get Jobs|Backdoor
 2125898422926680565|Thinking Out Loud|Two Prune
+2126307770916053043|Agentic AI|Shipper
+2126378629995405314|Model Aggregators;Higgsfield;Perplexity|mindHub
